@@ -1,0 +1,75 @@
+% !TEX root = main.tex
+
+\begin{figure*}
+    \begin{pcvstack}[center,boxed]
+        
+        \begin{pchstack}
+            
+            \begin{pcvstack}
+                
+                \procedure[]{$\setup(\secparam)$}
+                {
+                    v \sample \ring_{q_2}^\times,~
+                    \vec{h} \sample \ring_{q_1}^\lout \\
+                    (\vec{a}, \td_a) \gets \TrapGen(\secparam) \\
+                    (\vec{b}, \td_b) \gets \TrapGen(\secparam) \\
+                    \vec{u}_i \gets \SampPre(\td_{\vec{a}},  v^i),~\forall i \in \pm[\lin^*] \\
+                    \vec{w}_i \gets \SampPre(\td_{\vec{b}},  v^i),~\forall i \in [\lin^*] \\
+                    \crs \coloneqq
+                    \protect{\begin{pmatrix}
+                        \vec{a}, \vec{b}, (\vec{u}_i)_{i \in \pm[\lin^*]}, (\vec{w}_i)_{i \in [\lin^*]}, v, \vec{h}
+                    \end{pmatrix}} \\
+                    \pcreturn \crs
+                }
+            
+                \pcvspace
+                
+                \procedure[]{$\Prove(\crs, (\mat{M},\vec{y}), \vec{x})$}
+                {
+                    \vec{r} \coloneqq \mat{Q}_0^{-1}(\vec{y} - \mat{M} \vec{x}) \pccomment{$\mat{M}\vec{x} + \mat{Q}_0 \vec{r} = \vec{y}$} \\
+                    \vec{u} \coloneqq \sum_{i\in[\lin],j \in [\lin],k\in[\lout]: i \neq j} \vec{u}_{j-i} h_k M_{k,i} x_j \\ 
+                    \quad + \sum_{i\in[\lin'],j \in [\lin'],k\in[\lout]: i \neq j} \vec{u}_{j-i} h_k Q_{0,k,i} r_j \\ 
+                    \vec{w}_{\vec{x}} \coloneqq \sum_{i=1}^{\lin} \vec{w}_i x_i,~
+                    \vec{w}_{\vec{r}} \coloneqq \sum_{i=1}^{\lin'} \vec{w}_i r_i \\
+                    \pcreturn \pi \coloneqq (\vec{u},\vec{w}_{\vec{x}},\vec{w}_{\vec{r}})
+                }
+                
+            \end{pcvstack}
+            
+            \pchspace
+                            
+            \procedure[]{$\verify(\crs,  (\mat{M},\vec{y}), \pi)$}
+            {
+                \begin{subprocedure}%
+                    \dbox{
+                        \procedure[]{Preprocessing}
+                        {%
+                            \bar{c}_{\vec{h}^\transpose \mat{M}} \coloneqq p_{\vec{h}^\transpose \mat{M}}(v^{-1}) \bmod q_2 \\
+                            \bar{c}_{\vec{h}^\transpose \mat{Q}_0} \coloneqq p_{\vec{h}^\transpose \mat{Q}_0}(v^{-1}) \bmod q_2 \\
+                            \hat{c}_{\vec{h}^\transpose \vec{y}} \coloneqq \vec{h}^\transpose  \vec{y} \bmod q_2
+                        }
+                    }
+                \end{subprocedure} \\
+                c_{\vec{x}} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{x}} \bmod q \\
+                c_{\vec{r}} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{r}} \bmod q \\
+                \pcif 
+                \protect{
+                    \begin{cases}
+                        \vec{a}^\transpose \vec{u} \is=
+                        \bar{c}_{\vec{h}^\transpose \mat{M}} c_{\vec{x}} +
+                        \bar{c}_{\vec{h}^\transpose \mat{Q}_0} c_{\vec{r}}
+                        - \hat{c}_{\vec{h}^\transpose \vec{y}} \bmod q_2 \pclb 
+                        \norm{\vec{u}} \is\leq \delta_u \pclb
+                        \norm{\vec{w}_{\vec{x}}} \is\leq \delta_{w,x} \pclb
+                        \norm{\vec{w}_{\vec{r}}} \is\leq \delta_{w,r}
+                    \end{cases}
+                } \pcthen \\
+                \pcind \pcreturn 1 \\
+                \pcreturn 0
+            }
+            
+        \end{pchstack}
+        
+    \end{pcvstack}
+    \caption{SNARK for SIS.}\label{fig:snark_sis}
+\end{figure*}

@@ -1,0 +1,147 @@
+% !TEX root = main.tex
+
+% Packages for General Use
+
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{centernot}
+\usepackage[
+	lambda,
+	operators,
+	advantage,
+	sets,
+	adversary,
+	landau,
+	probability,
+	notions,
+	logic,
+	ff,
+	mm,
+	primitives,
+	events,
+	complexity,
+	asymptotics,
+	keys]{cryptocode}
+\usepackage{dashbox}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage{mdframed}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+% \usepackage{lmodern}
+\usepackage{ifxetex}
+\ifxetex % chktex 1
+\else
+\usepackage{microtype}
+\fi
+\usepackage{multirow}
+\usepackage{paralist}
+\usepackage{printlen}
+%\usepackage{showframe}
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{matrix,shapes,arrows,positioning,chains,calc,external}
+\usepackage[stable]{footmisc} % For footnotes in section titles
+\usepackage{nicematrix}
+% For repeating footnotes
+\usepackage{etoolbox}
+\newcommand{\repthanks}[1]{\textsuperscript{\ref{#1}}}
+\makeatletter
+\patchcmd{\maketitle}
+  {\def\thanks}
+  {\let\repthanks\repthanksunskip\def\thanks}
+  {}{}
+\patchcmd{\@maketitle}
+  {\def\thanks}
+  {\let\repthanks\@gobble\def\thanks}
+  {}{}
+\newcommand\repthanksunskip[1]{\unskip{}}
+\makeatother
+
+
+\pgfplotsset{compat=newest}
+\usetikzlibrary{external}
+\tikzexternalize[prefix=plots/]
+\tikzset{external/optimize=false}
+\tikzset{external/export=false}
+
+% Style to select only points from #1 to #2 (inclusive)
+\pgfplotsset{select coords between index/.style 2 args={
+    x filter/.code={
+        \ifnum\coordindex<#1\def\pgfmathresult{}\fi
+        \ifnum\coordindex>#2\def\pgfmathresult{}\fi
+    }
+}}
+
+% from pgfplotsthemetol.sty
+\definecolor{DarkPurple}{HTML}{332288}
+\definecolor{DarkBlue}{HTML}{6699CC}
+\definecolor{LightBlue}{HTML}{88CCEE}
+\definecolor{DarkGreen}{HTML}{117733}
+\definecolor{DarkRed}{HTML}{661100}
+\definecolor{LightRed}{HTML}{CC6677}
+\definecolor{LightPink}{HTML}{AA4466}
+\definecolor{DarkPink}{HTML}{882255}
+\definecolor{LightPurple}{HTML}{AA4499}
+
+\definecolor{DarkBrown}{HTML}{604c38}
+\definecolor{DarkTeal}{HTML}{23373b}
+\definecolor{LightBrown}{HTML}{EB811B}
+\definecolor{LightGreen}{HTML}{14B03D}
+
+\definecolor{DarkOrange}{HTML}{FFDD00}
+
+\pgfplotsset{width=1.0\textwidth,
+  height=0.45\textwidth,
+  xlabel={$d$},
+  ylabel={$\log(\#\textnormal{nodes})$},
+  cycle list={%
+    solid,black\\%
+    dotted,darkgray,very thick\\%
+    dashed,gray,thick\\%
+    loosely dotted,very thick\\%
+    loosely dashed,black,very thick\\%
+    loosely dashdotted,darkgray,very thick\\%
+    \\%
+    DarkBrown,thick\\%
+  },
+  legend pos=north west,
+  legend style={fill=none},
+  legend cell align={left}}
+
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage[inline]{enumitem}
+\setlist[enumerate]{label=(\roman*)}
+\usepackage[colorinlistoftodos,color=cyan!0!magenta!4!yellow!16,textsize=small]{todonotes}
+\usepackage[bookmarksdepth=2,pagebackref=true,breaklinks=true]{hyperref}
+\usepackage{breakcites}
+\usepackage[capitalize]{cleveref}
+\hypersetup{
+	colorlinks,
+	linkcolor={red!50!black},
+	citecolor={blue!50!black},
+	urlcolor={blue!80!black}
+}
+\usepackage{bm}
+\usepackage{tabularx}
+
+%% HANDLING DATA
+
+\usepackage{csvsimple}
+\usepackage{pgfplotstable}
+\usepackage[color={.9 .2 .2}]{attachfile2}
+
+\makeatletter
+\def\paragraph{\@startsection{paragraph}{4}{\z@}%
+                       {-12\p@ \@plus -4\p@ \@minus -4\p@}%
+                       {-0.5em \@plus -0.22em \@minus -0.1em}%
+                       {\normalfont\normalsize\bfseries}}
+\makeatother
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

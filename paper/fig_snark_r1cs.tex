@@ -1,0 +1,159 @@
+% !TEX root = main.tex
+
+\begin{figure*}
+    \centering
+    \begin{pcvstack}[center,boxed]
+                
+        \procedure[]{$\setup(\secparam)$}
+        {
+            v \sample \ring_{q_3}^\times,~
+            \vec{h} \sample \ring_{q_1}^\lin,~
+            \vec{f} \sample \ring_{q_2}^\lin \\
+            (\vec{a}, \td_{\vec{a}}) \gets \TrapGen(\secparam) \\
+            (\bar{\vec{b}}, \td_{\bar{\vec{b}}}) \gets \TrapGen(\secparam) \\
+            (\vec{b}, \td_{\vec{b}}) \gets \TrapGen(\secparam) \\
+            \vec{u}_{a,i} \gets \SampPre(\td_{\vec{a}},  v^i),~\forall i \in \pm[\lin^*] \\
+            \bar{\vec{w}}_i \gets \SampPre(\td_{\bar{\vec{b}}},  v^{-i}),~\forall i \in [\lin^*] \\
+            \vec{w}_i \gets \SampPre(\td_{\vec{b}},  v^i),~\forall i \in [\lin^*] \\
+            \crs \coloneqq
+            \protect{\begin{pmatrix}
+                \vec{a}, \vec{b}, (\vec{u}_{a,i})_{i \in \pm[\lin^*]}, (\bar{\vec{w}}_i)_{i \in [\lin^*]}, (\vec{w}_i)_{i \in [\lin^*]}, v, \vec{h}, \vec{f}
+            \end{pmatrix}} \\
+            \pcreturn \crs
+        }
+        
+    \end{pcvstack}
+    \caption{SNARK for R1CS, setup.}\label{fig:snark_r1cs_setup}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{pcvstack}[center,boxed]
+                
+        \procedure[]{$\Prove(\crs, (\mat{A},\mat{B},\mat{C},\mat{D},\vec{y}), \vec{x})$}
+        {
+            \vec{a} \coloneqq \mat{A} \vec{x} \\
+            \vec{b} \coloneqq \mat{B} \vec{x} \\
+            \vec{c} \coloneqq \mat{C} \vec{x} \\
+            % \vec{r}_{\vec{a}} \coloneqq \mat{Q}_0^{-1}(\vec{a} - \mat{A} \vec{x}) \\
+            % \vec{r}_{\vec{b}} \coloneqq \mat{Q}_0^{-1}(\vec{b} - \mat{B} \vec{x}) \\
+            % \vec{r}_{\vec{c}} \coloneqq \mat{Q}_0^{-1}(\vec{c} - \mat{C} \vec{x}) \\
+            \vec{r}_0 \coloneqq \mat{Q}_0^{-1}(\vec{c} - \vec{a} \circ \vec{b}) \pccomment{$\vec{a} \circ \vec{b} + \mat{Q}_0 \vec{r}_0 = \vec{c}$} \\
+            \vec{r}_1 \coloneqq \mat{Q}_0^{-1}(\vec{y} - \mat{D} \vec{x}) \pccomment{$\mat{D} \vec{x} + \mat{Q}_0 \vec{r}_1 = \vec{y}$} \\
+            \vec{u}_{\vec{a}} \coloneqq \sum_{i,j,k\in[\lin]: i \neq j} \vec{u}_{j-i} h_k A_{k,i} x_j - \sum_{i,k \in [\lin]: i \neq k} \vec{u}_{k-i} h_i a_k \\
+            \vec{u}_{\vec{b}} \coloneqq \sum_{i,j,k\in[\lin]: i \neq j} \vec{u}_{j-i} h_k B_{k,i} x_j - \sum_{i,k \in [\lin]: i \neq k} \vec{u}_{k-i} h_i b_k \\
+            \vec{u}_{\vec{c}} \coloneqq \sum_{i,j,k\in[\lin]: i \neq j} \vec{u}_{j-i} h_k C_{k,i} x_j - \sum_{i,k \in [\lin]: i \neq k} \vec{u}_{k-i} h_i c_k \\
+            \vec{u}_0 \coloneqq \sum_{j,k\in[\lin]: k \neq j} \vec{u}_{j-k} h_k a_k b_j + \sum_{i,j\in[\lin'],k\in[\lin]: i \neq j} \vec{u}_{j-i} h_k Q_{0,k,i} r_{0,j}  - \sum_{j,k\in[\lin]:k \neq j} \vec{u}_{j-k} h_k c_j \\
+            \vec{u}_1 \coloneqq \sum_{i,j,k\in[\lin]: i \neq j} \vec{u}_{j-i} h_k D_{k,i} x_j + \sum_{i,j\in[\lin'],k\in[\lin]: i \neq j} \vec{u}_{j-i} h_k Q_{0,k,i} r_{1,j} \\ 
+            \vec{u}_\diamond \coloneqq \sum_{j,k\in[\lin]: k \neq j} \vec{u}_{j-k} h_k a_k f_j - \sum_{i,k \in [\lin]: i \neq k} \vec{u}_{k-i} h_i f_i a_k \\
+            \bar{\vec{w}}_{\vec{h}^\transpose \circ \vec{a}^\transpose} \coloneqq \sum_{i=1}^\lin \bar{\vec{w}}_i h_i a_i \\
+            (\vec{w}_{\vec{x}}, \vec{w}_{\vec{a}}, \vec{w}_{\vec{b}}, \vec{w}_{\vec{c}})
+            \coloneqq \sum_{i=1}^{\lin} \vec{w}_i (x_i, a_i, b_i, c_i) \\
+            (\vec{w}_{\vec{r}_0}, \vec{w}_{\vec{r}_1})
+            \coloneqq \sum_{i=1}^{\lin'} \vec{w}_i (r_{0,i}, r_{1,i}) \\
+            \pcreturn \pi \coloneqq 
+            \protect{
+                \begin{pmatrix}
+                    \vec{u}_{\vec{a}},\vec{u}_{\vec{b}},\vec{u}_{\vec{c}},\vec{u}_0,\vec{u}_1,\vec{u}_\diamond, \pclb
+                    \bar{\vec{w}}_{\vec{h}^\transpose \circ \vec{a}^\transpose}, \vec{w}_{\vec{x}},\vec{w}_{\vec{a}},\vec{w}_{\vec{b}},\vec{w}_{\vec{c}}, \pclb
+                    % \vec{w}_{\vec{r}_{\vec{a}}},\vec{w}_{\vec{r}_{\vec{b}}},\vec{w}_{\vec{r}_{\vec{c}}},
+                    \vec{w}_{\vec{r}_0},\vec{w}_{\vec{r}_1}
+                \end{pmatrix}
+            }
+        }
+        
+    \end{pcvstack}
+    \caption{SNARK for R1CS, prove.}\label{fig:snark_r1cs_prove}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \begin{pcvstack}[center,boxed]
+                                
+        \procedure[]{$\verify(\crs, (\mat{A},\mat{B},\mat{C},\mat{D},\vec{y}), \pi)$}
+        {   
+            \begin{subprocedure}%
+                \dbox{
+                    \procedure[]{Preprocessing}
+                    {%
+                        \bar{c}_{\vec{h}^\transpose} \coloneqq p_{\vec{h}^\transpose}(v^{-1}) \bmod q_3 \\
+                        \bar{c}_{\vec{h}^\transpose \circ \vec{f}^\transpose} \coloneqq p_{\vec{h}^\transpose \circ \vec{f}^\transpose}(v^{-1}) \bmod q_3 \\
+                        \bar{c}_{\vec{h}^\transpose \mat{A}} \coloneqq p_{\vec{h}^\transpose \mat{A}}(v^{-1}) \bmod q_3 \\
+                        \bar{c}_{\vec{h}^\transpose \mat{B}} \coloneqq p_{\vec{h}^\transpose \mat{B}}(v^{-1}) \bmod q_3 \\
+                        \bar{c}_{\vec{h}^\transpose \mat{C}} \coloneqq p_{\vec{h}^\transpose \mat{C}}(v^{-1}) \bmod q_3 \\
+                        \bar{c}_{\vec{h}^\transpose \mat{D}} \coloneqq p_{\vec{h}^\transpose \mat{D}}(v^{-1}) \bmod q_3 \\
+                        \bar{c}_{\vec{h}^\transpose \mat{Q}_0} \coloneqq p_{\vec{h}^\transpose \mat{Q}_0}(v^{-1}) \bmod q_3 \\
+                        c_{\vec{f}} \coloneqq p_{\vec{f}}(v) \bmod q_3 \\
+                        \hat{c}_{\vec{h}^\transpose \vec{y}} \coloneqq \vec{h}^\transpose  \vec{y} \bmod q_3 
+                    }
+                }
+            \end{subprocedure} \\
+            %%%%%
+            \bar{c}_{\vec{h}^\transpose \circ \vec{a}^\transpose} \coloneqq \bar{\vec{b}}^\transpose \bar{\vec{w}}_{\vec{h}^\transpose \circ \vec{a}^\transpose} \bmod q_3 \\
+            c_{\vec{x}} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{x}} \bmod q_3 \\
+            c_{\vec{a}} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{a}} \bmod q_3 \\
+            c_{\vec{b}} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{b}} \bmod q_3 \\
+            c_{\vec{c}} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{c}} \bmod q_3 \\
+            % c_{\vec{r}_a} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{r}_a} \bmod q_3 \\
+            % c_{\vec{r}_b} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{r}_b} \bmod q_3 \\
+            % c_{\vec{r}_c} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{r}_c} \bmod q_3 \\
+            c_{\vec{r}_0} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{r}_0} \bmod q_3 \\
+            c_{\vec{r}_1} \coloneqq \vec{b}^\transpose \vec{w}_{\vec{r}_1} \bmod q_3 \\
+            %%%%%
+            \pcif 
+            \protect{
+                \begin{cases}
+                    \vec{a}^\transpose \vec{u}_{\vec{a}} \is=
+                    \bar{c}_{\vec{h}^\transpose \mat{A}} c_{\vec{x}} 
+                    % +
+                    % \bar{c}_{\vec{h}^\transpose \mat{Q}_0} c_{\vec{r}_a}
+                    - \bar{c}_{\vec{h}^\transpose} c_{\vec{a}} \bmod q_3 \pclb
+                    %%
+                    \vec{a}^\transpose \vec{u}_{\vec{b}} \is=
+                    \bar{c}_{\vec{h}^\transpose \mat{B}} c_{\vec{x}} 
+                    % +
+                    % \bar{c}_{\vec{h}^\transpose \mat{Q}_0} c_{\vec{r}_b}
+                    - \bar{c}_{\vec{h}^\transpose} c_{\vec{b}} \bmod q_3  \pclb
+                    %%
+                    \vec{a}^\transpose \vec{u}_{\vec{c}} \is=
+                    \bar{c}_{\vec{h}^\transpose \mat{C}} c_{\vec{x}} 
+                    % +
+                    % \bar{c}_{\vec{h}^\transpose \mat{Q}_0} c_{\vec{r}_c}
+                    - \bar{c}_{\vec{h}^\transpose} c_{\vec{c}} \bmod q_3  \pclb
+                    %%
+                    \vec{a}^\transpose \vec{u}_0 \is=
+                    \bar{c}_{\vec{h}^\transpose \circ \vec{a}^\transpose} c_{\vec{b}} +
+                    \bar{c}_{\vec{h}^\transpose \mat{Q}_0} c_{\vec{r}_0}
+                    - \bar{c}_{\vec{h}^\transpose} c_{\vec{c}} \bmod q_3 \pclb
+                    %%
+                    \vec{a}^\transpose \vec{u}_1 \is=
+                    \bar{c}_{\vec{h}^\transpose \mat{D}} c_{\vec{x}} +
+                    \bar{c}_{\vec{h}^\transpose \mat{Q}_0} c_{\vec{r}_1}
+                    - \hat{c}_{\vec{h}^\transpose \vec{y}} \bmod q_3 \pclb
+                    %%
+                    \vec{a}^\transpose \vec{u}_\diamond \is=
+                    \bar{c}_{\vec{h}^\transpose \circ \vec{a}^\transpose} c_{\vec{f}} -
+                    \bar{c}_{\vec{h}^\transpose \circ \vec{f}^\transpose} c_{\vec{a}} \bmod q_3 \pclb
+                    %%
+                    \norm{\vec{u}_{\vec{a}}} \is\leq \delta_{u,a} \pclb
+                    \norm{\vec{u}_{\vec{b}}} \is\leq \delta_{u,b} \pclb
+                    \norm{\vec{u}_{\vec{c}}} \is\leq \delta_{u,c} \pclb
+                    \norm{\vec{u}_0} \is\leq \delta_{u,0} \pclb
+                    \norm{\vec{u}_1} \is\leq \delta_{u,1} \pclb
+                    \norm{\vec{u}_\diamond} \is\leq \delta_{u,\diamond} \pclb
+                    \norm{\bar{\vec{w}}_{\vec{h}^\transpose \circ \vec{a}^\transpose}} \is\leq \bar{\delta}_w \pclb
+                    \norm{\vec{w}_{\vec{x}}} \is\leq \delta_{w,x} \pclb
+                    \norm{\vec{w}_{\vec{a}}} \is\leq \delta_{w,a} \pclb
+                    \norm{\vec{w}_{\vec{b}}} \is\leq \delta_{w,b} \pclb
+                    \norm{\vec{w}_{\vec{c}}} \is\leq \delta_{w,c} \pclb
+                    \norm{\vec{w}_{\vec{r}_0}} \is\leq \delta_{w,0} \pclb
+                    \norm{\vec{w}_{\vec{r}_1}} \is\leq \delta_{w,1} \pclb
+                \end{cases}
+            } \pcthen \\
+            \pcind \pcreturn 1 \\
+            \pcreturn 0
+        }
+        
+    \end{pcvstack}
+    \caption{SNARK for R1CS, verify.}\label{fig:snark_r1cs_verify}
+\end{figure*}

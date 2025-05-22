@@ -1,0 +1,273 @@
+% Paper Template
+% Version: 20200902
+% For information about this template -> ReadMe.txt
+
+\def\paperversion{2} % 0 - anonymous, 1 - camera ready, 2 - full version
+\def\style{1} % 0 - article, 1 - lncs, 2 - acm, 3 - usenix, 4 - ieeetr, 5 - sciendo, 6 - lipics
+\def\showcomments{1} % 0 - no comments, 1 - show comments
+
+\ifnum\showcomments=0
+\PassOptionsToPackage{disable}{todonotes}
+\fi
+
+\input{0-paper_styles}
+ 
+\input{0-packages}
+
+% comment out whole block if not wanted
+\ifnum\style=0
+  \usepackage{authblk}
+  \renewcommand\Affilfont{\large}
+  \renewcommand\Authfont{\large}
+  \renewcommand\Authands{, }
+\fi
+% Autoref subsumed by cref
+% \input{0-paper_settings}
+
+\ifnum\style=1 % Fixes springer bibstyle, necessary here to not double Packages
+\newcommand\printbibliography{
+  \ifnum\paperversion=\fullversion
+        \bibliographystyle{alpha} 
+  \else
+    \def\doi##1{\href{https://doi.org/##1}{\url{##1}}}
+        \bibliographystyle{splncs04}
+  \fi
+  \bibliography{\bibfiles}
+}
+
+\fi
+
+\input{0-macros}
+ 
+
+% --- -----------------------------------------------------------------
+% --- Document-specific definitions.
+% --- -----------------------------------------------------------------
+
+
+%%%%% Header
+\ifnum\style=2
+    \ifnum\paperversion=0
+        \acmConference[Anonymous Submission to ACM CCS ???]{ACM Conference on Computer and Communications Security}{Due [Date]}{[City], [Country]}
+        \acmYear{[Year]}
+        \fancyhead[C]{Anonymous Submission \#123 to ACM CCS ???} % TODO: replace 9999 with your paper number
+%       \fancyhf{} % Remove fancy page headers
+    \fi
+    \ifnum\paperversion=1
+      \setcopyright{acmlicensed}
+      \copyrightyear{2019}
+      \acmYear{2019}
+      \acmConference[CCS '19]{2019 ACM SIGSAC Conference on Computer and Communications Security}{November 11--15, 2019}{London, United Kingdom}
+      \acmBooktitle{2019 ACM SIGSAC Conference on Computer and Communications Security (CCS '19), November 11--15, 2019, London, United Kingdom}
+      \acmPrice{15.00}
+      \acmDOI{10.1145/3319535.3354262}
+      \acmISBN{978-1-4503-6747-9/19/11}
+      \settopmatter{printfolios=true,printacmref=true, printccs=true}
+      \fancyhead{}
+    \fi
+    \ifnum\paperversion=2
+      \renewcommand\footnotetextcopyrightpermission[1]{}
+      \settopmatter{printfolios=true,printacmref=false, printccs=false}
+      \fancyhead{}
+      \let\oldmakealltitles\makealltitles
+      \renewcommand\makealltitles{
+        \oldmakealltitles
+        \thispagestyle{fancy}
+        \lhead{An extended abstract of this paper appears at ACM CCS '19. This is the full version.}
+        \rhead{}
+        \pagestyle{plain}
+      }
+    \fi
+\fi
+
+
+%%%%% Title
+\fulltext{
+  \title{Something something 2}
+  \subtitle{\textnormal{(Full Version)}}
+}{
+\title{Something something
+  \index{Malavolta, Giulio}
+  \index{Osadnik, Micha\l{}}
+}
+\subtitle{\textnormal{(Extended Abstract)}}
+}
+
+
+%%%%% Authors and Affiliation
+% Commands for authors for different styles
+% 0 - article: if authoblk used: \author{Name1\authorcr Affil1 /and
+%              Name2\authorcr Affil2} or \author[..]{Name1}
+%              \author[..]{Name2} .. \affil[..]{Affil1} \affil[..]{Affil2}...
+% 1 - lncs: \author{\inst{}\and} \insitute{\email{}\and}
+% 2 - acm: \author{\institution,\department,\streetaddress,\city,\country}
+% 3 - usenix: \author{{\rm Your N.\ Here}\\Your Institution\and}
+% 4 - ieee: \author{\authorblockA{\IEEEauthorrefmark{1}}\IEEEauthorblockA{}}
+% 5 - pets: \author[marker]{Name} \affil[marker]{Affiliation}
+% 6 - lipics: \author{Name}{Affil}[{Email}{orcid}{funding}]
+
+\ifnum\paperversion=0
+\author{\vspace{-5em}}
+\institute{}
+\else
+\author{
+}
+\fi
+
+
+%%%%% Miscellaneous Settings
+
+
+\newcommand{\rlai}[2][inline]{\todo[#1,color=green!40!white]{\textbf{rlai:} #2}\xspace}
+\newcommand{\osdnk}[2][inline]{\todo[#1,color=red!60!white]{\textbf{osdnk:} #2}\xspace}
+
+
+
+\pagenumbering{arabic}
+\allowdisplaybreaks%
+
+% Yes this works for every style
+\ifnum\style=1
+\addbibresource{cryptobib/abbrev3.bib,cryptobib/crypto.bib,extrarefs.bib}
+\else
+\ifnum\style=6
+\addbibresource{cryptobib/abbrev3.bib,cryptobib/crypto.bib,extrarefs.bib}
+\else
+\addbibresource{cryptobib/abbrev3.bib}
+\addbibresource{cryptobib/crypto.bib}
+\addbibresource{extrarefs.bib} 
+\fi
+\fi
+
+
+
+
+% --- -----------------------------------------------------------------
+% --- The document starts here.
+% --- -----------------------------------------------------------------
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+
+\usepackage{braket}
+\usepackage{amsmath}
+\usepackage{kantlipsum}
+
+% Fixing scalable fonts error
+% https://tex.stackexchange.com/questions/10706/pdftex-error-font-expansion-auto-expansion-is-only-possible-with-scalable
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\begin{document}
+\ifnum\showcomments=1
+%\input{0-format_infos}
+\fi
+
+
+\ifnum\style=2
+\ifnum\paperversion=1
+% If style=2 - acm generate CCS Code (ACM Computing Classification Scheme)
+% from http://dl.acm.org/ccs.cfm  and paste it here.
+% Caution: No indent before \begin{CCSXML}
+
+\begin{CCSXML}
+    <ccs2012>
+        <concept>
+        <concept_id>10002978.10002979</concept_id>
+        <concept_desc>Security and privacy~Cryptography</concept_desc>
+        <concept_significance>500</concept_significance>
+        </concept>
+    </ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Security and privacy~Cryptography}
+\fi
+\fi
+
+% Use this commands in that order independet of the style. It will fix
+% everything.
+\allabstracts{\input{0-abstract}}
+\makealltitles
+\ifnum\paperversion=2
+\setcounter{tocdepth}{1}
+%\tableofcontents
+\fi
+\ifnum\showcomments=1
+%\tableofcontents
+\fi
+
+% --- -----------------------------------------------------------------
+% --- Input Files by Section.
+% --- -----------------------------------------------------------------
+
+% \inputanon{FILENAME} include FILENAME only in paperstyle=anonymous
+% \inputcam{FILENAME} include FILENAME only in paperstyle=cameraready
+% \inputfull{FILENAME} include FILENAME only in paperstyle=fullversion
+
+\begingroup
+\let\clearpage\relax
+\input{intro}
+\endgroup
+
+\ifnum\paperversion=0
+\else
+% \section*{Acknowledgments}
+\fi
+
+% \clearpage
+
+% %-------------------------------------------------------------------------------
+% \section*{Availability}
+% %-------------------------------------------------------------------------------
+%
+% USENIX program committees give extra points to submissions that are
+% backed by artifacts that are publicly available. If you made your code
+% or data available, it's worth mentioning this fact in a dedicated
+% section.
+
+
+% --- -----------------------------------------------------------------
+% --- The Bibliography.
+% --- -----------------------------------------------------------------
+% Add the option --min-crossrefs=1000 to bibtex to avoid having conferences in the bibliography.
+% Yes this works for every style
+% \catcode`\_11\relax
+% \printbibliography
+\renewcommand{\doi}[1]{}
+\ifnum\paperversion=2
+    \bibliographystyle{alpha}
+\else
+    \bibliographystyle{splncs04}
+\fi
+\bibliography{cryptobib/abbrev3.bib,cryptobib/crypto.bib,extrarefs.bib}
+
+  
+\ifnum\paperversion=1
+
+\fi
+
+\ifnum\paperversion=2
+
+\begin{appendix}
+	\begingroup
+	\let\clearpage\relax
+	\endgroup
+\end{appendix}
+
+\clearpage
+
+% --- -----------------------------------------------------------------
+% --- The Appendix.
+% --- Maybe some appendices shouldn't appear in every version
+% --- -----------------------------------------------------------------
+
+
+\fi
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% TeX-engine: xetex
+%%% End:

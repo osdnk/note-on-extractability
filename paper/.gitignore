@@ -1,0 +1,16 @@
+*.synctex.gz
+*.out
+*.log
+*.fls
+*.fdb_latexmk
+*.brf
+*.bbl
+*.aux
+*.blg
+/main.pdf
+*.sublime-project
+*.sublime-workspace
+*.afti
+*.auxlock
+*.xdv
+*.atfi

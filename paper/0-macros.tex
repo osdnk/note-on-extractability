@@ -1,0 +1,722 @@
+% !TEX root = main.tex
+
+% Macros for General Use
+
+% Convention
+% one-letter variables: plain (it)
+% multiple-letter variables: sf
+% one-word commands: lower cases
+% multiple-word commands: Capital Initials
+% name: rm
+% vector: bold
+
+\usepackage{esvect}
+
+\newcommand{\transpose}{\mathtt{T}}
+% \newcommand{\lin}{\mathsf{lin}}
+% \newcommand{\lout}{\mathsf{lout}}
+% \newcommand{\lin}{\ensuremath{\nu}}
+% \newcommand{\lout}{\ensuremath{\mu}}
+\newcommand{\lpub}{\ensuremath{s}}
+\newcommand{\lin}{\ensuremath{w}}
+\newcommand{\lout}{\ensuremath{t}}
+\newcommand{\lrand}{\ensuremath{\eta}}
+\newcommand{\rdim}{\ensuremath{n}}
+\newcommand{\mrank}{\ensuremath{\eta}}
+\newcommand{\td}{\mathsf{td}}
+\newcommand{\conductor}{\mathfrak{f}}
+\newcommand{\MM}{\mathbb{M}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\units}[1][q]{\ring_{#1}^\times}
+\newcommand{\inner}[2]{\ensuremath{\left\langle {#1, #2} \right\rangle}}
+\newcommand{\ideal}[1]{\ensuremath{\left\langle {#1} \right\rangle}}
+\newcommand{\is}[1]{\stackrel{?}{#1}}
+\newcommand{\ctxt}{\mathsf{ctxt}}
+\newcommand{\TrapGen}{\mathsf{TrapGen}}
+\newcommand{\SampPre}{\mathsf{SampPre}}
+\newcommand{\SampD}{\mathsf{SampD}}
+\newcommand{\round}[1]{\ensuremath{\lfloor#1\rceil}}
+\newcommand{\linspan}[1]{\ensuremath{\mathsf{Span}(#1)}}
+\DeclareMathOperator{\rot}{rot}
+\DeclareMathOperator{\vecf}{vec}
+\newcommand{\coeff}{\mathsf{coeff}}
+\newcommand{\ones}{1^\circ}
+\newcommand{\vones}{\vec{1}^\circ}
+\newcommand{\fieldnorm}{\mathcal{N}}
+
+\newcommand{\tx}{\mathsf{tx}}
+
+\newcommand{\nrow}{\mathsf{nrow}}
+\newcommand{\ncol}{\mathsf{ncol}}
+
+\newcommand{\BGW}{\mathsf{BGW}}
+\newcommand{\latBGW}{\mathsf{BGW}^{\sharp}}
+
+% Settings
+\makeatletter
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+\DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+\DeclareOldFontCommand{\sc}{\normalfont\scshape}{\@nomath\sc}
+\DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+\DeclareOldFontCommand{\sl}{\normalfont\slshape}{\@nomath\sl}
+\DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+\makeatother
+
+% Abstract and Keywords
+\def\gabstract{}
+\def\gconference{???}
+\NewDocumentCommand\allabstracts{m}{\def\gabstract{#1}}
+\NewDocumentCommand\conference{m}{\def\gconference{#1}}
+\NewDocumentCommand\mypubinfo{}{An extended abstract of this paper appears at  \gconference.}
+\newcommand\makealltitles{
+\ifnum\style=\sigalternate
+    {
+        \begin{abstract}{\gabstract}\end{abstract} \maketitle%
+    }
+\else
+  \ifnum\style=\sciendo
+      {\begin{abstract}{\gabstract}\end{abstract}
+      }
+      \maketitle
+  \else
+    {\maketitle%
+    % \ifnum\paperversion=\fullversion
+    % \pubinfo{\mypubinfo}
+    % \fi%
+    % \bool_if:nTF {\int_compare_p:n {\style=\lncs}}
+    \ifnum\style=\lncs
+      {\begin{abstract}{\gabstract}\end{abstract}}
+    \else
+      {\begin{abstract}{\gabstract}\end{abstract}
+        \ifnum\style=\ieeetr
+        \begin{IEEEkeywords}
+          {\gkeywords}
+        \end{IEEEkeywords}
+        \fi
+      }
+    \fi
+    }
+  \fi
+\fi
+}
+
+
+% Editorial
+\mathchardef\mhyphen="2D
+\newcommand{\TabEQ}{\setlength{\abovedisplayskip}{-\topskip}\setlength{\belowdisplayskip}{-\topskip}}
+\newcommand{\ab}{\allowbreak}
+\newcommand{\cross}{\ding{'070}}
+\newcommand{\eg}{{\it e.g.}\xspace}
+\newcommand{\etal}{{\it et~al.}\xspace}
+\newcommand{\etc}{{\it etc.}\xspace}
+\newcommand{\ie}{{\it i.e.}\xspace}
+\newcommand{\ignore}[1]{}
+\newcommand{\mypar}[1]{\parskip 5pt\noindent{{\textsc{#1}}}}
+\newcommand{\opeq}{\ \oplus \hspace{-0.3 em} =}
+\newcommand{\pubinfo}[1]{\begin{figure}[!t] \vspace*{-5ex} \textsf{\scriptsize #1}\end{figure}}
+\newcommand{\suchthat}{\ {\it s.t.}\ }
+\newcommand{\tick}{\ding{'063}}
+\newcommand{\tuple}[1]{\ensuremath{\left(#1\right)}}
+\renewcommand{\Pr}[1]{\ensuremath{\mathsf{Pr}\left[#1\right]}}
+\newcommand{\Prmid}[2]{\ensuremath{\mathsf{Pr}\left[#1 \middle| #2 \right]}}
+
+% Cryptocode Pseudocode
+\newcommand{\pcas}{~\highlightkeyword{as}}
+\newcommand{\pcreceive}{\highlightkeyword{receive}}
+\newcommand{\pcsend}{\highlightkeyword{send}}
+\newcommand{\pcensure}{\highlightkeyword{ensure}}
+\newcommand{\pcparseas}[2]{\highlightkeyword{parse} #1~\highlightkeyword{as} #2}
+\newcommand{\pcreceivefrom}[2]{\highlightkeyword{receive} #1~\highlightkeyword{from} #2}
+\newcommand{\pcsendto}[2]{\highlightkeyword{send} #1~\highlightkeyword{to} #2}
+\makeatletter % for auto indention without end...
+\newcommand\pcend{\@pc@decreaseindent}
+\makeatother
+
+% Entity
+\newcommand{\authority}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\client}{\ensuremath{\mathcal{C}}\xspace}
+%\newcommand{\edv}{\ensuremath{\mathcal{E}}\xspace} % Extractor
+\providecommand{\edv}{\ensuremath{\mathcal{E}}\xspace} % Extractor
+\newcommand{\reader}{\ensuremath{\mathcal{R}}\xspace}
+\newcommand{\receiver}{\ensuremath{\mathcal{R}}\xspace}
+\newcommand{\sender}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\server}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\signer}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\writer}{\ensuremath{\mathcal{W}}\xspace}
+\renewcommand{\extractor}{\ensuremath{\mathcal{E}}\xspace}
+\renewcommand{\prover}{\ensuremath{\mathcal{P}}\xspace}
+\renewcommand{\simulator}{\ensuremath{\mathcal{S}}\xspace}
+\renewcommand{\verifier}{\ensuremath{\mathcal{V}}\xspace}
+
+% Colors
+\newcommand{\gray}[1]{\colorbox{black!20}{$#1$}}
+
+% Vectors and Matrices
+\renewcommand{\vec}[1]{{\boldsymbol{\mathbf{#1}}}}
+\newcommand{\mat}[1]{\ensuremath{\mathbf{#1}}\xspace} % Matrix
+
+% Units
+\newcommand{\us}{$\mu$s}
+
+% Parameters
+\newcommand{\prfoutlen}{\ensuremath{\secpar}\xspace}
+\newcommand{\pubparam}{\ensuremath{\mathsf{pp}}\xspace}
+
+% Keys
+\newcommand{\PK}{\ensuremath{\mathsf{PK}}\xspace} % (Set of) Public Keys
+\newcommand{\SK}{\ensuremath{\mathsf{SK}}\xspace} % (Set of) Secret Keys
+\newcommand{\apk}{\ensuremath{\mathsf{apk}}\xspace} % Authority Public Key
+\newcommand{\ask}{\ensuremath{\mathsf{ask}}\xspace} % Authority Secret Key
+\newcommand{\cpk}{\ensuremath{\mathsf{cpk}}\xspace} % Client Secret Key
+\newcommand{\csk}{\ensuremath{\mathsf{csk}}\xspace} % Client Secret Key
+\newcommand{\dk}{\ensuremath{\mathsf{dk}}\xspace} % Decryption Key
+\newcommand{\ek}{\ensuremath{\mathsf{ek}}\xspace} % Encryption or Evaluation Key
+\newcommand{\gpk}{\ensuremath{\mathsf{gpk}}\xspace} % Group Public Key
+\newcommand{\ik}{\ensuremath{\mathsf{ik}}\xspace} % Issuer Key
+\newcommand{\mpk}{\ensuremath{\mathsf{mpk}}\xspace} % Master Public Key
+\newcommand{\msk}{\ensuremath{\mathsf{msk}}\xspace} % Master Secret Key
+\newcommand{\ok}{\ensuremath{\mathsf{ok}}\xspace} % Opener Key
+\newcommand{\opk}{\ensuremath{\mathsf{opk}}\xspace} % Opening Public Key
+\newcommand{\osk}{\ensuremath{\mathsf{osk}}\xspace} % Opening Secret Key
+\newcommand{\rk}{\ensuremath{\mathit{rk}}\xspace} % Re-encryption Key
+\newcommand{\upk}{\ensuremath{\mathsf{upk}}\xspace} % User Public Key
+\newcommand{\usk}{\ensuremath{\mathsf{usk}}\xspace} % User Secret Key
+\newcommand{\xk}{\ensuremath{\mathsf{xk}}\xspace} % Extraction Key
+\newcommand{\hdr}[0]{\ensuremath{\mathit{Hdr}}}
+
+% Sets and Data Containers
+\newcommand{\OD}{\ensuremath{\mathsf{OD}}\xspace} % Oblivious Dictionary
+\newcommand{\bits}[1][]{\ensuremath{\{0,1\}^{#1}}\xspace}
+\newcommand{\corrupted}{\ensuremath{\mathrm{Corr}}\xspace}
+\newcommand{\lang}{\ensuremath{\mathcal{L}}\xspace}
+\newcommand{\pos}{\ensuremath{\mathsf{Pos}}\xspace} % Position Map
+\newcommand{\ring}{\mathcal{R}} % Ring
+\newcommand{\rings}{\mathcal{S}} % Ring
+\newcommand{\ringt}{\mathcal{T}} % Ring
+\newcommand{\field}{\mathcal{K}} % Field
+\newcommand{\polylog}[1][\secpar]{\mathsf{polylog}(#1)}
+
+% Spaces
+\newcommand{\AttrSp}{\ensuremath{\mathcal{X}}\xspace}
+\newcommand{\CtxtSp}{\ensuremath{\mathcal{C}}\xspace}
+\newcommand{\DataSp}{\ensuremath{\mathcal{D}}\xspace}
+\newcommand{\EvtSp}{\ensuremath{\mathcal{E}}\xspace}
+%\newcommand{\G}{\ensuremath{\mathbb{G}}} % group of g and h
+\newcommand{\IDSp}{\ensuremath{\mathcal{ID}}\xspace}
+\newcommand{\KeySp}{\ensuremath{\mathcal{K}}\xspace}
+\newcommand{\KeywordSp}{\ensuremath{\mathcal{W}}\xspace}
+\newcommand{\MsgSp}{\ensuremath{\mathcal{M}}\xspace}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\PasswordSp}{\ensuremath{\mathcal{P}\xspace}} % Password Space
+\newcommand{\PubKeySp}{\ensuremath{\mathcal{PK}}\xspace} % Public Key Space
+\newcommand{\QuerySp}{\ensuremath{\mathcal{Q}}\xspace}
+\newcommand{\ResponseSp}{\ensuremath{\mathcal{R}}\xspace}
+\newcommand{\SecKeySp}{\ensuremath{\mathcal{SK}}\xspace} % Secret Key Space
+\newcommand{\UpdateSp}{\ensuremath{\mathcal{U}}\xspace}
+\newcommand{\UsernameSp}{\ensuremath{\mathcal{U}}\xspace}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\cB}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand{\cF}{\ensuremath{\mathcal{F}}\xspace} % Class of functions F
+\newcommand{\cG}{\ensuremath{\mathcal{G}}\xspace} % Class of functions G
+\newcommand{\cGms}{\ensuremath{\mathcal{G} \setminus \{g^*\}}\xspace} % Class of functions G
+\newcommand{\cGps}{\ensuremath{\mathcal{G} \cup \{g^*\}}\xspace} % Class of functions G
+\newcommand{\cW}{\ensuremath{\mathcal{W}}\xspace}
+\newcommand{\cX}{\ensuremath{\mathcal{X}}\xspace}
+\newcommand{\cY}{\ensuremath{\mathcal{Y}}\xspace}
+\newcommand{\cZ}{\ensuremath{\mathcal{Z}}\xspace}
+
+% Variables
+\newcommand{\CPU}{\ensuremath{\mathsf{CPU}}\xspace}
+\newcommand{\ChFlag}{\ensuremath{\mathsf{Ch}}\xspace}
+\newcommand{\MEM}{\ensuremath{\mathsf{MEM}}\xspace}
+\newcommand{\addr}{\ensuremath{\mathsf{addr}}\xspace}
+\newcommand{\aux}{\ensuremath{\mathsf{aux}}\xspace}
+\newcommand{\cnt}{\ensuremath{\mathsf{cnt}}\xspace} % Count
+\newcommand{\crs}{\ensuremath{\mathsf{crs}}\xspace} % Common Reference or Random String
+\newcommand{\ctr}{\ensuremath{\mathsf{ctr}}\xspace} % Counter
+\newcommand{\data}{\ensuremath{\mathsf{data}}\xspace}
+\newcommand{\epoch}{\ensuremath{\mathsf{epoch}}\xspace}
+\newcommand{\fdv}{\ensuremath{\mathcal{F}}\xspace}
+\newcommand{\flag}{\ensuremath{\mathsf{Flag}}\xspace}
+\newcommand{\hyb}{\ensuremath{\mathsf{Hyb}}\xspace}
+\newcommand{\id}{\ensuremath{\mathsf{id}}\xspace}
+\newcommand{\lbl}{\ensuremath{\mathsf{label}}\xspace}
+\newcommand{\op}{\ensuremath{\mathsf{op}}\xspace}
+\newcommand{\password}{\ensuremath{\mathsf{pw}\xspace}}
+\newcommand{\sid}{\ensuremath{\mathsf{sid}}\xspace}
+\newcommand{\stash}{\ensuremath{\mathsf{stash}}\xspace}
+\newcommand{\statement}{x}
+\newcommand{\trapdoor}{\ensuremath{\mathsf{td}}\xspace}
+\newcommand{\username}{\ensuremath{\mathsf{un}}\xspace}
+\newcommand{\val}{\ensuremath{\mathsf{val}}\xspace}
+\newcommand{\zdv}{\ensuremath{\mathcal{Z}}\xspace}
+\newcommand{\stmt}{\mathsf{stmt}}
+\newcommand{\wit}{\mathsf{wit}}
+
+% Computation Models
+\newcommand{\ITM}{\ensuremath{\mathrm{ITM}}\xspace} % Interactive Turing Machines
+\newcommand{\PRAM}{\ensuremath{\mathrm{PRAM}}\xspace} % Parallel Random Access Machines
+\newcommand{\RAM}{\ensuremath{\mathrm{RAM}}\xspace} % Random Access Machines
+%\newcommand{\TM}{\ensuremath{\mathrm{TM}}\xspace} % Turing Machines
+\newcommand{\mPRAM}{\ensuremath{\mathrm{mPRAM}}\xspace}  % Memoryless Parallel Random Access Machines
+
+% Primitives - Generic
+\newcommand{\ABE}{\ensuremath{\mathsf{ABE}}\xspace} % Attribute-based Encryption
+\newcommand{\AnonComm}{\ensuremath{\mathsf{AC}}\xspace} % Anonymous Communication
+\newcommand{\CPRF}{\ensuremath{\mathsf{CPRF}}\xspace} % Constrained PRF
+%\newcommand{\Com}{\ensuremath{\Gamma}\xspace}
+\newcommand{\Commit}{\ensuremath{\mathsf{Com}}\xspace} % Commitments
+\newcommand{\DSSE}{\ensuremath{\mathsf{DSSE}}\xspace} % Dynamic SSE
+\newcommand{\DS}{\ensuremath{\mathcal{DS}}\xspace} % Digital Signatures
+\newcommand{\ENCscheme}{\ensuremath{\mathcal{E}}\xspace} % Encryption Scheme
+\newcommand{\FHE}{\ensuremath{\mathsf{FHE}}\xspace} % Fully Homomorphic Encryption
+\newcommand{\FS}{\ensuremath{\mathcal{FS}}\xspace} % Functional Signatures
+\newcommand{\GC}{\ensuremath{\mathsf{GC}}\xspace} % Garbled Circuits
+\newcommand{\GS}{\ensuremath{\mathsf{GS}}\xspace} % Groth-Sahai Proofs
+\newcommand{\HIBE}{\ensuremath{\mathcal{HIBE}}\xspace} %Hierarchical IBE
+\newcommand{\HS}{\ensuremath{\mathcal{HS}}\xspace} % Homomorphic Signatures
+\newcommand{\IBE}{\ensuremath{\mathsf{IBE}}\xspace} % Identity-based Encryption
+\newcommand{\IBS}{\ensuremath{\mathsf{IBS}}\xspace} % Identity-based Signatures
+\newcommand{\LRS}{\ensuremath{\Sigma}\xspace} % Linkable Ring Signatures
+\newcommand{\NCE}{\ensuremath{\mathsf{NCE}}\xspace} % Non-Committing Encryption
+\newcommand{\BE}[0]{\ensuremath{\mathsf{BE}}\xspace} % Broadcast encryption
+\newcommand{\ORAM}{\ensuremath{\mathsf{ORAM}}\xspace} % Oblivious Random Access Machines
+\newcommand{\OWF}{\ensuremath{\mathsf{OWF}}\xspace} % One Way Function
+\newcommand{\OWP}{\ensuremath{\mathsf{OWP}}\xspace} % One Way Permutation
+\newcommand{\ObvFwd}{\ensuremath{\mathsf{ObF}}\xspace} % Oblivious Forwarding
+\newcommand{\PKE}{\ensuremath{\mathsf{PKE}}\xspace} % Public Key Encryption
+\newcommand{\PPRF}{\ensuremath{\mathsf{PPRF}}\xspace} % Punctureable PRF
+\newcommand{\PRF}{\ensuremath{\mathsf{PRF}}\xspace} % Pseudorandom Functions
+\newcommand{\RE}{\ensuremath{\mathsf{RE}}\xspace} % Randomized Encodings
+\newcommand{\RingCT}{\ensuremath{\mathsf{RingCT}}\xspace} % Ring Confidential Transaction
+\newcommand{\SKE}{\ensuremath{\mathsf{SKE}}\xspace} % Symmetric Key Encryption
+\newcommand{\SSE}{\ensuremath{\mathsf{SSE}}\xspace} % Symmetric Searchable Encryption
+\newcommand{\TIBE}{\ensuremath{\mathcal{TIBE}}\xspace} % Timed IBE
+\newcommand{\VE}{\ensuremath{\mathsf{VE}}\xspace} % Verifiable Encodings
+\newcommand{\VRE}{\ensuremath{\mathsf{VRE}}\xspace} % Verifiable Randomized Encodings
+\newcommand{\rGC}{\ensuremath{\mathit{r}\mathsf{GC}}\xspace} % Reusable Garbled Circuits
+\newcommand{\rPRF}{\ensuremath{\mathsf{rPRF}}\xspace} % Randomized Pseudorandom Functions
+
+% Primitives - Specific
+\newcommand{\NRPRF}{\ensuremath{\mathsf{NR}}\xspace} % Naor-Reingold PRF
+\newcommand{\pythia}{\textsc{Pythia}\xspace} % The Pythia PRF Service
+
+% Algorithms
+\newcommand{\GenToken}{\ensuremath{\mathsf{GenToken}}\xspace}
+\newcommand{\KDer}{\ensuremath{\mathsf{KDer}}\xspace} % Key Derivation
+\newcommand{\KeyComp}{\ensuremath{\mathsf{KeyComp}}\xspace} % Key Compression
+\newcommand{\NextStep}{\ensuremath{\mathsf{NextStep}}\xspace}
+\newcommand{\OAccess}{\ensuremath{\mathsf{OAccess}}\xspace} % Oblivious Access
+\newcommand{\PoK}[2]{\ensuremath{\mathsf{PoK}\left\{#1 : #2\right\}}\xspace}
+\newcommand{\ReRand}{\ensuremath{\mathsf{ReRand}}\xspace} % Re-randomize
+\newcommand{\Read}{\ensuremath{\mathsf{Read}}\xspace}
+\newcommand{\Write}{\ensuremath{\mathsf{Write}}\xspace}
+\newcommand{\access}{\ensuremath{\mathsf{Access}}\xspace} % Access
+\newcommand{\aggregate}{\ensuremath{\mathsf{Agg}}\xspace} % Aggregate
+\newcommand{\auth}{\ensuremath{\mathsf{Auth}}\xspace}
+\newcommand{\com}{\ensuremath{\mathsf{Com}}\xspace}
+\newcommand{\constrain}{\ensuremath{\mathsf{Constrain}}\xspace} % Constrain
+\newcommand{\corr}{\ensuremath{\mathsf{Corr}}\xspace}
+\newcommand{\delegate}{\ensuremath{\mathsf{Del}}\xspace}
+\newcommand{\enroll}{\ensuremath{\mathtt{enrl}}\xspace}
+\newcommand{\evict}{\ensuremath{\mathsf{Evict}}\xspace} % Evict
+\newcommand{\fetch}{\ensuremath{\mathsf{Fetch}}\xspace} % Fetch
+\newcommand{\finalize}{\ensuremath{\mathsf{Finalize}}\xspace}
+\newcommand{\foward}{\ensuremath{\mathsf{Fwd}}\xspace}
+\newcommand{\gen}{\ensuremath{\mathsf{Gen}}\xspace}
+\newcommand{\join}{\ensuremath{\mathsf{Join}}\xspace}
+\newcommand{\judge}{\ensuremath{\mathsf{Judge}}\xspace} % Judge
+\newcommand{\link}{\ensuremath{\mathsf{Link}}\xspace}
+\newcommand{\open}{\ensuremath{\mathsf{Open}}\xspace}
+\newcommand{\prove}{\ensuremath{\mathsf{Prove}}\xspace}
+\newcommand{\rand}{\ensuremath{\mathsf{Rand}}\xspace}
+\newcommand{\register}{\ensuremath{\mathsf{Reg}}\xspace}
+\newcommand{\request}{\ensuremath{\mathsf{Request}}\xspace}
+\newcommand{\respond}{\ensuremath{\mathsf{Respond}}\xspace}
+%\newcommand{\rotate}{\ensuremath{\mathsf{Rotate}}\xspace}
+\newcommand{\setup}{\ensuremath{\mathsf{Setup}}\xspace}
+\newcommand{\store}{\ensuremath{\mathsf{store}}\xspace}
+\newcommand{\test}{\ensuremath{\mathsf{Test}}\xspace}
+\newcommand{\trace}{\ensuremath{\mathsf{Trace}}\xspace}
+\newcommand{\update}{\ensuremath{\mathsf{Update}}\xspace}
+\newcommand{\validate}{\ensuremath{\mathtt{val}}\xspace}
+\newcommand{\encrypt}{\ensuremath{\mathsf{Enc}}\xspace}
+\newcommand{\decrypt}{\ensuremath{\mathsf{Dec}}\xspace}
+\newcommand{\preverify}{\ensuremath{\mathsf{PreVerify}}\xspace}
+\newcommand{\lhl}{\ensuremath{\mathsf{lhl}}\xspace}
+
+
+% Protocols
+\newcommand{\exec}[3]{\ensuremath{#1 \langle #2,\allowbreak #3 \rangle}} % Protocol Execution (Protocol Name, First Party, Second Party)
+
+% Oracles
+\newcommand{\oracles}{\ensuremath{\mathbb{O}}\xspace}
+\newcommand{\oracle}{\ensuremath{\mathcal{O}}\xspace}
+
+\newcommand{\corrO}{\corr\oracle}
+\newcommand{\decO}{\dec\oracle}
+\newcommand{\fwdO}{\fwd\oracle}
+\newcommand{\kgenO}{\kgen\oracle}
+\newcommand{\sigO}{\sig\oracle}
+\newcommand{\vkgenO}{\mathsf{vkgen}\oracle}
+
+% Assumptions
+\newcommand{\SIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\mathsf{SIS}}}%
+  {\ensuremath{\mathsf{SIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\vSIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\mathsf{vSIS}}}%
+  {\ensuremath{\mathsf{vSIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\ISIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\mathsf{ISIS}}}%
+  {\ensuremath{\mathsf{ISIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\RSIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{R\text{-}\mathsf{SIS}}}%
+  {\ensuremath{R\text{-}\mathsf{SIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\MSIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{M\text{-}\mathsf{SIS}}}%
+  {\ensuremath{M\text{-}\mathsf{SIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\RISIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{R\text{-}\mathsf{ISIS}}}%
+  {\ensuremath{R\text{-}\mathsf{ISIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\MISIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{M\text{-}\mathsf{ISIS}}}%
+  {\ensuremath{M\text{-}\mathsf{ISIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\kSIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}\mathsf{SIS}}}%
+  {\ensuremath{k\text{-}\mathsf{SIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\kISIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}\mathsf{ISIS}}}%
+  {\ensuremath{k\text{-}\mathsf{ISIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\kRSIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}R\text{-}\mathsf{SIS}}}%
+  {\ensuremath{k\text{-}R\text{-}\mathsf{SIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\kRISIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}R\text{-}\mathsf{ISIS}}}%
+  {\ensuremath{k\text{-}R\text{-}\mathsf{ISIS}_{\/#1}}}%
+  \xspace%
+}
+
+\newcommand{\kMSIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}M\text{-}\mathsf{SIS}}}%
+  {\ensuremath{k\text{-}M\text{-}\mathsf{SIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\kMISIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}M\text{-}\mathsf{ISIS}}}%
+  {\ensuremath{k\text{-}M\text{-}\mathsf{ISIS}_{\/#1}}}%
+  \xspace%
+}
+
+\newcommand{\LWE}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\mathsf{LWE}}}%
+  {\ensuremath{\mathsf{LWE}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\RLWE}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{R\text{-}\mathsf{LWE}}}%
+  {\ensuremath{R\text{-}\mathsf{LWE}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\dNTRU}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\mathsf{dNTRU}}}%
+  {\ensuremath{\mathsf{dNTRU}_{\/#1}}}%
+  \xspace%
+}
+
+\newcommand{\NTRUEnc}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\mathsf{NTRUEnc}}}%
+  {\ensuremath{\mathsf{NTRUEnc}_{\/#1}}}%
+  \xspace%
+}
+
+
+\newcommand{\kLWE}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}\mathsf{LWE}}}%
+  {\ensuremath{k\text{-}\mathsf{LWE}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\kRLWE}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{k\text{-}R\text{-}\mathsf{LWE}}}%
+  {\ensuremath{k\text{-}R\text{-}\mathsf{LWE}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\hkRLWE}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{hk\text{-}R\text{-}\mathsf{LWE}}}%
+  {\ensuremath{hk\text{-}R\text{-}\mathsf{LWE}_{\/#1}}}%
+  \xspace%
+}
+
+
+% Security Games
+\newcommand{\Experiment}{\ensuremath{\mathsf{Exp}}}
+\newcommand{\ExpReal}{\mathbf{Real}}
+\newcommand{\ExpIdeal}{\mathbf{Ideal}}
+
+\newcommand{\ExpAnonymity}{\ensuremath{\mathsf{Anon}}}
+\newcommand{\ExpBinding}{\ensuremath{\mathsf{Binding}}\xspace}
+\newcommand{\ExpCorrectness}{\ensuremath{\mathsf{Corr}}}
+\newcommand{\ExpEUFCMA}{\ensuremath{\mathsf{EUF}\mhyphen\mathsf{CMA}}}
+\newcommand{\ExpEUFIDCMA}{\ensuremath{\mathsf{EUF}\mhyphen\mathsf{ID}\mhyphen\mathsf{CMA}}}
+\newcommand{\ExpHiding}{\ensuremath{\mathsf{Hiding}}\xspace}
+\newcommand{\ExpIKCCAone}{\ensuremath{\mathsf{IK}\mhyphen\mathsf{CCA}1}}
+\newcommand{\ExpIKCPA}{\ensuremath{\mathsf{IK}\mhyphen\mathsf{CCA}}}
+\newcommand{\ExpINDCCAone}{\ensuremath{\mathsf{IND}\mhyphen\mathsf{CCA}1}}
+\newcommand{\ExpINDCCA}{\ensuremath{\mathsf{IND}\mhyphen\mathsf{CCA}}}
+\newcommand{\ExpINDCPA}{\ensuremath{\mathsf{IND}\mhyphen\mathsf{CPA}}}
+\newcommand{\ExpINDIDCCA}{\ensuremath{\mathsf{IND}\mhyphen\mathsf{ID}\mhyphen\mathsf{CCA}}}
+\newcommand{\ExpINDIDCPA}{\ensuremath{\mathsf{IND}\mhyphen\mathsf{ID}\mhyphen\mathsf{CPA}}}
+\newcommand{\ExpINDsIDCCA}{\ensuremath{\mathsf{IND}\mhyphen\mathsf{sID}\mhyphen\mathsf{CCA}}}
+\newcommand{\ExpINDsIDCPA}{\ensuremath{\mathsf{IND}\mhyphen\mathsf{sID}\mhyphen\mathsf{CPA}}}
+\newcommand{\ExpLinkability}{\ensuremath{\mathsf{Linkability}}\xspace}
+\newcommand{\ExpObliviousness}{\ensuremath{\mathsf{Obliviousness}}\xspace}
+\newcommand{\ExpPrivacy}{\ensuremath{\mathsf{Priv}}}
+\newcommand{\ExpSoundness}{\ensuremath{\mathsf{Soundness}}\xspace}
+\newcommand{\ExpUnlinkability}{\ensuremath{\mathsf{Unlinkability}}\xspace}
+
+
+% Text Description
+\newcommand{\In}{\ensuremath{\mathrm{In}}\xspace}
+\newcommand{\Next}{\ensuremath{\mathrm{Next}}\xspace}
+\newcommand{\Out}{\ensuremath{\mathrm{Out}}\xspace}
+\newcommand{\Traceability}{\ensuremath{\mathrm{Trace}}\xspace}
+
+
+% States
+\newcommand{\accept}{\ensuremath{\mathtt{accept}}\xspace}
+\newcommand{\abort}{\ensuremath{\mathtt{abort}}\xspace}
+\newcommand{\block}{\ensuremath{\mathtt{block}}\xspace}
+\newcommand{\init}{\ensuremath{\mathtt{init}}\xspace}
+\newcommand{\halt}{\ensuremath{\mathsf{halt}}\xspace}
+\newcommand{\reject}{\ensuremath{\mathtt{reject}}\xspace}
+
+% Lattices
+
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\GH}{GH}
+
+
+%Other stuff
+\newcommand{\hybrid}{\ensuremath{\mathsf{Hyb}}}
+
+%Without that some procedures will have an unwanted indent
+\let\oldprocedure\procedure
+\renewcommand\procedure[3][]{\hspace{0pt}\oldprocedure[#1]{#2}{#3}}
+
+
+%Adaptor
+\newcommand{\adaptor}{\ensuremath{\mathsf{AdpSg}}}
+\newcommand{\psign}{\ensuremath{\mathsf{pSign}}}
+% \newcommand{\pverify}{\ensuremath{\mathsf{pVf}}}
+\newcommand{\padapt}{\ensuremath{\mathsf{Adapt}}}
+\newcommand{\pext}{\ensuremath{\mathsf{Ext}}}
+\newcommand{\ADS}{\ensuremath{\mathsf{AS}}}
+\newcommand{\Sig}{\sign} % sign
+\newcommand{\Ver}{\verify} % verification
+\newcommand{\Signer}{\mathcmd{\mathsf{S}}} % signer
+\newcommand{\User}{\mathcmd{\mathsf{U}}} % user
+
+
+
+% proof system / FC
+\newcommand{\Verify}{{\mathsf{Verify}}}
+\newcommand{\PreVerify}{{\mathsf{PreVerify}}}
+\newcommand{\Prove}{{\mathsf{Prove}}}
+\newcommand{\Setup}{{\mathsf{Setup}}}
+\newcommand{\Com}{{\mathsf{Com}}}
+\newcommand{\Open}{{\mathsf{Open}}}
+\newcommand{\ck}{{\mathsf{ck}}}
+
+
+% ADAPTOR SIGNATURE
+\newcommand{\hashH}{\mathcal{H}}
+\newcommand{\hashF}{\mathcal{F}}
+\newcommand{\simulate}{\mathsf{S}}
+\newcommand{\extract}{\mathsf{K}}
+\newcommand{\advers}{\mathsf{A}}
+\newcommand{\define}{:=}
+\newcommand{\secPar}{\lambda}
+%\renewcommand{\kgen}{\KeyGen}
+\renewcommand{\verify}{\mathsf{Verify}}
+\newcommand{\presig}{\psign}
+% \newcommand{\preverify}{\pverify}
+\newcommand{\adapt}{\padapt}
+\renewcommand{\ext}{\pext}
+\newcommand{\SSigForge}{\mathsf{StrongSigForge}}
+\newcommand{\SigForge}{\mathsf{SigForge}}
+\newcommand{\oracleSig}{\sign\oracle}
+\newcommand{\oraclePreSig}{\psign\oracle}
+\newcommand{\SigScheme}{\Sigma}
+\newcommand{\ASigScheme}{\Xi}
+\newcommand{\KeyGen}{\mathsf{KeyGen}}
+\newcommand{\Gen}{\mathsf{Gen}}
+\newcommand{\RandExch}{\mathsf{R\textbf{--}Exchange}}
+\newcommand{\DetSign}{\mathsf{D\textbf{--}Sign}}
+\newcommand{\genr}{\mathsf{GenR}}
+\newcommand{\AKeyGen}{\mathsf{aGen}}
+\newcommand{\ASecretGen}{\mathsf{aSecGen}}
+\newcommand{\ACommit}{\mathsf{aCommit}}
+\newcommand{\APreSign}{\mathsf{pSign}}
+\newcommand{\ACompleteSign}{\mathsf{Adapt}}
+\newcommand{\AVrfy}{\mathsf{pVrfy}}
+\newcommand{\AExtract}{\mathsf{Ext}}
+\newcommand{\ASecVrf}{\mathsf{aSecVrfy}}
+\newcommand{\ASigForge}{\mathsf{aSigForge}}
+\newcommand{\AExtractability}{\mathsf{aWitExt}}
+\newcommand{\ASigCor}{\mathsf{aPreSigCorrect}}
+\newcommand{\APreSigSound}{\mathsf{aPreSigSound}}
+\newcommand{\LR}{L_R}
+\newcommand{\hardRSingle}{R_{E_0}^{1}}
+\newcommand{\hardRMulti}{R_{E_0}^{t_S}}
+\newcommand{\hardR}{R_{E_0}^*}
+\newcommand{\hardROpt}{R_{E_0}^{\dagger}}
+\newcommand{\dpt}{\mathsf{DPT}}
+\newcommand{\pgets}{\rightleftharpoons}
+\newcommand{\tra}{\mathit{trans}}
+\newcommand{\complSign}{\mathsf{Complete}}
+\newcommand{\preSign}{\mathsf{preSign}}
+\newcommand{\queryM}{\mathcal{Q}}
+\newcommand{\queryY}{\mathcal{Y}}
+\newcommand{\sVal}{y}
+\newcommand{\pVal}{Y}
+\newcommand{\pValEY}{E_Y}
+\newcommand{\vecpValEY}{\vec{E}_Y}
+\newcommand{\insta}{I}
+\newcommand{\chall}{\textsf{chall}}
+\newcommand{\preSigVal}{\hat{\sigma}}
+\newcommand{\sigVal}{\sigma}
+\newcommand{\secretShare}[1]{x_{#1}}
+\newcommand{\aeufcma}{\ensuremath{\mathsf{aEUF}\text{-}\mathsf{CMA}}}
+
+% To make acknowledgement commands from acm available for everything else
+
+\unless\ifnum\style=\sigalternate
+\newenvironment{acks}{%
+  \begingroup
+  \section{Acknowledgments}
+}{%
+  \endgroup
+}
+\makeatletter
+\def\grantsponsor#1#2#3{#2}
+\newcommand\grantnum[3][]{#3%
+  \def\@tempa{#1}\ifx\@tempa\@empty\else\space(\url{#1})\fi}
+\makeatother
+\fi
+
+% Easier include whole file depending on paperversion
+\NewDocumentCommand\inputanon{m}{
+\ifnum\paperversion=\anonymous \input{#1} \fi
+}
+
+\NewDocumentCommand\inputcam{m}{
+\ifnum\paperversion=\cameraready \input{#1} \fi
+}
+
+\NewDocumentCommand\inputfull{m}{
+\ifnum\paperversion=\fullversion \input{#1} \fi
+}
+
+% to provide \todoX and \todoX*
+% {UserMacro}{UserName}{Color}[different color for inline comments optional]
+% -> \todoUserMacro
+\NewDocumentCommand\newuser{mmmo}
+{
+	\expandafter\NewDocumentCommand\csname todo#1\endcsname{sO{}m}{
+		\IfBooleanTF{##1}
+		{\unless\ifnum\showcomments=0{\IfNoValueTF{#4}{\color{#3}}{\color{#4}}\textbf{#2:} ##3}\xspace\fi
+    }
+		{	\quitvmode% ensures that inline todos after pargraph headings are properly displayed
+			\texorpdfstring{\todo[inline,color=#3,##2]{\textbf{#2:} ##3}\xspace}{(TODO: #2: ##3)}%
+		}%
+	}
+}
+
+
+\newcommand{\anonymoustext}[2]{%
+\ifnum\paperversion=\anonymous%
+{{#1}}%
+\else%
+{{#2}}%
+\fi%
+}%
+
+\newcommand{\fulltext}[2]{%
+\ifnum\paperversion=\fullversion%
+{{#1}}%
+\else%
+{{#2}}%
+\fi%
+}%
+
+
+\newcommand{\deltaext}{\delta_1}
+
+
+
+% braces next to matrix
+
+\newcommand\coolover[2]{\mathrlap{\smash{\overbrace{\phantom{%
+					\begin{matrix} #2 \end{matrix}}}^{\mbox{$#1$}}}}#2}
+
+\newcommand\coolunder[2]{\mathrlap{\smash{\underbrace{\phantom{%
+					\begin{matrix} #2 \end{matrix}}}_{\mbox{$#1$}}}}#2}
+
+\newcommand\coolleftbrace[2]{%
+	#1\left\{\vphantom{\begin{matrix} #2 \end{matrix}}\right.}
+
+\newcommand\coolrightbrace[2]{%
+	\left.\vphantom{\begin{matrix} #1 \end{matrix}}\right\}#2}
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

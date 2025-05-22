@@ -1,0 +1,7 @@
+ 
+[submodule "paper/cryptobib"]
+	path = paper/cryptobib
+	url = ../../cryptobib/export
+[submodule "cryptobib"]
+	path = cryptobib
+	url = https://github.com/cryptobib/export
