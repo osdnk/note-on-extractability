@@ -2,6 +2,405 @@
 
 % Macros for General Use
 
+\NewDocumentCommand{\noresizebox}{s m m m}{#4}% Dummy to get rid of resizebox.
+\NewDocumentCommand{\autoresizebox}{s m m m}{\begin{adjustbox}{max width=#2}#4\end{adjustbox}}% Alias for ajdustbox
+\newcommand{\hl}[1]{\textcolor{blue}{#1}} % Highlight something
+\newcommand{\hlsis}[1]{#1}%{\textcolor{magenta}{#1}} % Highlight SIS-related stuff. Maybe different from hl?Highlight SIS-related stuff. Maybe different from hl?
+\newcommand{\mattop}[1]{\overline{\mat{#1}}}  % Top part of matrix
+\newcommand{\matbot}[1]{\underline{\mat{#1}}} % Bottom part of matrix
+\newcommand{\vectop}[1]{\overline{\vec{#1}}}  % Top part of vector
+\newcommand{\vecbot}[1]{\underline{\vec{#1}}} % Bottom part of vector
+\newcommand{\starred}[1]{{#1}^{*}} % star as a wrapped
+\newcommand{\betasis}{\beta^{\mathsf{sis}}} % bound for SIS
+\newcommand{\betaSIS}{\betasis}
+\newcommand{\betaext}{\beta^{\mathsf{ext}}} % bound for extraction
+\newcommand{\betaout}{{\beta_{\mathsf{out}}}}
+\newcommand{\betaV}{{\beta_{\mat{V}}}}
+\newcommand{\betaVbar}{{\beta_{{\overline{\mat{V}}}}}}
+\newcommand{\squad}{\hskip\fontdimen5\font}
+\newcommand{\ssum}{{\scriptstyle\sum}}
+\newcommand{\ringiso}{\ring_q \isomto (\FF_{q^e})^{\eulerphi / e}}
+\newcommand{\varX}{\mathsf{x}}
+\newcommand{\varsX}{\boldsymbol{\mathsf{x}}}
+\newcommand{\varY}{\mathsf{y}}
+\newcommand{\Oh}{\mathcal{O}}
+\newcommand{\rocs}{\ensuremath{\mathtt{R1CS}}\xspace}
+\newcommand{\bq}{\bmod q}
+% \newcommand{\smallsum}{ \sum}
+% \let\oldsum\sum
+% \renewcommand{\sum}{ \oldsum}
+
+\newcommand{\rdrarrowRAW}{%
+    \begin{tikzpicture}[baseline=-0.8ex]%
+      \fill[draw,opacity=0] (-0.6ex,-1.1ex) rectangle (1.3ex,0.8ex);%
+      \draw[-stealth,line width=0.7pt] (-0.6ex,0.6ex) -- (0.0ex,0.6ex) -- (0.0ex,-0.6ex) -- (1.2ex,-0.6ex);%
+    \end{tikzpicture}%
+}
+\newsavebox\rdrarrowBOX%
+\savebox\rdrarrowBOX{\ensuremath{\rdrarrowRAW}}%
+\newcommand\rdrarrow{\scalerel*{\usebox{\rdrarrowBOX}}{\otimes}}%
+
+
+\newcommand{\drdarrowRAW}{%
+    \begin{tikzpicture}[baseline=-0.8ex,rotate=90,xscale=-1]%
+      \fill[draw,opacity=0] (-0.6ex,-1.1ex) rectangle (1.3ex,0.8ex);%
+      \draw[-stealth,line width=0.7pt] (-0.6ex,0.6ex) -- (0.0ex,0.6ex) -- (0.0ex,-0.6ex) -- (1.2ex,-0.6ex);%
+    \end{tikzpicture}%
+}
+\newsavebox\drdarrowBOX%
+\savebox\drdarrowBOX{\ensuremath{\drdarrowRAW}}%
+\newcommand\drdarrow{\scalerel*{\usebox{\drdarrowBOX}}{\otimes}}%
+
+\newcommand{\horirocs}{\ensuremath{\rdrarrow\mhyphen\rocs}}
+\newcommand{\vertrocs}{\ensuremath{\drdarrow\mhyphen\rocs}}
+\newcommand{\NP}{\ensuremath{\mathsf{NP}}\xspace}
+\newcommand{\PSPACE}{\ensuremath{\mathsf{PSPACE}}\xspace}
+
+
+\NewDocumentCommand{\inprodr}{o m}{\para{#2}_{\ring\IfNoValueTF{#1}{}{, #1}}}% _In_ner _prod_uct in _R_.
+
+\NewDocumentCommand{\kappabatch}{m}{\frac{#1}{\abs{\challfield}}} % knowledge error of \pibatch given the number of instances that are batched
+
+\newcommand{\rad}{\mathsf{rad}} % relation with single block
+
+% Protocol stuff
+\newcommand\eqdefaults[1]{{\color{gray}\mathrel{ \stackrel{\makebox[0pt]{\mbox{\normalfont\fontsize{4pt}{6pt}\selectfont default}}}{~\defeq~}}#1}}
+
+
+\newcommand{\relLin}[1][\ntot, \wdim, \rep, \beta]{\texorpdfstring{\Xi^{\mathsf{lin}}_{#1}}{Xi\^{}lin}} % relation with single block
+\newcommand{\relLinDef}{\ensuremath{
+  \left\{
+    \begin{aligned}
+      &((\mat{H}, \mat{F}, \mat{Y}), \mat{W}) \colon \\
+      &\quad
+        \begin{aligned}
+          &\mat{H} \in \ring_q^{\nout \times \ntot}~~
+          \mat{F} \in \ring_q^{\ntot \times \tdim^{\tensor \mu}} \subseteq \ring_q^{\ntot \times \wdim} \\
+          &\mat{Y} \in \ring_q^{\nout \times \rep}~~
+          \mat{W} \in \ring^{\wdim \times \rep} \\
+          &\cantwonorm{\mat{W}} \leq \beta \\
+          &\mat{H} \mat{F} \mat{W} = \mat{Y} \bmod{q}
+        \end{aligned}
+    \end{aligned}
+  \right\}
+}}
+
+\newcommand{\relLdeUnstruct}[1][\nout, \ntot, \mu, \tilde{\mu}, \rep, \beta, t]{\Xi^{\mathsf{lde}}_{#1}} 
+\newcommand{\relLdeStruct}[1][\nout, \ntot, \mu, \tilde{\mu}, \rep, \beta, t]{\Xi^{\mathsf{lde\mhyphen{}\otimes}}_{#1}} 
+\newcommand{\relLdeBoth}[1][\nout, \ntot, \mu, \tilde{\mu}, \rep, \beta, t]{\Xi^{\mathsf{lde(\mhyphen{}\otimes)}}_{#1}} 
+% \newcommand{\relLdeDef}{\ensuremath{
+%   \left\{
+%       \begin{aligned}
+%           &((\mat{H}, \mat{F}, \mat{Y}, (\vec{r}_i, \vec{s}_i, \mat{M}_i)_{i \in [t]}), \mat{W}) \colon \\
+%           &\quad
+%           \begin{aligned}
+%               &((\mat{H}, \mat{F}, \mat{Y}), \mat{W}) \in \relLin[\nout, \ntot, \mu, \rep, \beta] \\
+%               & (\vec{r}_i, \vec{s}_i, \mat{M}_i)_{i \in [t]} \in (\ring_q^{\tilde{\mu}}, \ring_q^\rep, \ring_q^{\tilde{\wdim} \times \wdim})^t \\
+%               & \forall_{i \in [t]} ~~ \vec{s}_i^\transpose = \LDE[\mat{M}_i \mat{W}](\vec{r}_i) \bmod q
+%           \end{aligned}
+%       \end{aligned}
+%   \right\}
+% }}
+\newcommand{\relLdeDef}{\ensuremath{
+  \left\{
+      \begin{aligned}
+          &((\mat{H}, \mat{F}, \mat{Y}, (\vec{r}_i, \vec{s}_i, \mat{M}_i)_{i \in [t]}), \mat{W}) \colon
+          \\
+          &\quad
+          \begin{aligned}
+              & ((\mat{H}, \mat{F}, \mat{Y}), \mat{W}) \in \relLin[\nout, \ntot, \mu, \rep, \beta] \\ 
+              & (\vec{r}_i, \vec{s}_i, \mat{M}_i)_{i \in [t]} \in 
+              (\ring_q^{\tilde{\mu}} \times \ring_q^\rep \times \ring_q^{\tilde{\wdim} \times \wdim})^t \\
+              % (\ring_q^{\tilde{\mu}}, \ring_q^\rep, \ring_q^{\tilde{\wdim} \times \wdim})^t \\
+              & \forall_{i \in [t]} ~~ \vec{s}_i = \LDE[\mat{M}_i \mat{W}](\vec{r}_i) \bmod q
+          \end{aligned}
+      \end{aligned}
+  \right\}
+}}
+\newcommand{\piLdeRed}[2]{
+    \relLdeUnstruct[\nout, \ntot, \mu, \rep, \beta{#1}, t]
+    ~{#2}~ 
+    \relLin[\nout+1, \ntot+1, \wdim, \mu, \rep, \beta{#1}, t], ~
+    \relLin[\ntop+1, \ntop+1, \wdim \tilde{\wdim} \ell \rep, 1, \tilde{\mu}, \tilde{\beta}{#1}], ~ 
+    \relLdeStruct[\ntop+1, \ntop+1, \tilde{\wdim} t \ell, \rep, \hat{\mu}, \hat{\beta}{#1}, t]
+}
+
+%% Deprecated
+\newcommand{\relLdeStructgen}[2]{
+\begin{equation*}
+    #1[\nout, \ntot, \mu, \rep, \beta, t] \defeq \left\{
+       \begin{aligned}
+         &((\mat{H}, \mat{F}, \mat{Y}, (\vec{r}_i, \vec{s}_i, \mat{M}_i \eqdefaults{\mat{I}_\wdim})_{i \in [t]}), \mat{W}) \colon \\
+         &\quad
+           \begin{aligned}
+               &((\mat{H}, \mat{F}, \mat{Y}), \mat{W}) \in \relLin[\nout, \ntot, \mu, \rep, \beta] \\
+               & (\vec{r}_i, \vec{s}_i, \mat{M}_i)_{i \in [t]} \in (\ring_q^\mu, \ring_q^\rep, \ring_q^{\tilde{\wdim} \times \wdim})^t \\
+               & \forall_{i \in [t]} ~~ \vec{s}_i^\transpose = \LDE[\mat{M}_i\mat{W}](\vec{r}_i) \bmod q
+           \end{aligned}
+       \end{aligned}
+    \right\}
+    \end{equation*}
+}
+
+\newcommand{\numSumInputs}{\ell}
+% \newcommand{\relSumUnstruct}[1][\nout, \ntot, \mu, \tilde{\mu}, \rep, \beta, t]{\Xi^{\mathsf{sum}}_{#1}} 
+\NewDocumentCommand{\relSumUnstruct}{O{\tilde{\mu}} O{({\relLin[(i)]}, t_i)_{i \in [\numSumInputs]}}}{
+  \IfBlankTF{#1}
+    {\Xi^{\mathsf{sum}}}
+    {\Xi^{\mathsf{sum}}_{#1}\left[#2\right]}
+}
+\NewDocumentCommand{\relSumStruct}{O{\tilde{\mu}} O{({\relLin[(i)]}, t_i)_{i \in [\numSumInputs]}}}{
+  \IfBlankTF{#1}
+    {\Xi^{\mathsf{sum}\mhyphen{}\otimes}}
+    {\Xi^{\mathsf{sum}\mhyphen{}\otimes}_{#1}\left[#2\right]}
+}
+\NewDocumentCommand{\relSumBoth}{O{\tilde{\mu}} O{({\relLin[(i)]}, t_i)_{i \in [\numSumInputs]}}}{
+  \IfBlankTF{#1}
+    {\Xi^{\mathsf{sum}(\mhyphen{}\otimes)}}
+    {\Xi^{\mathsf{sum}(\mhyphen{}\otimes)}_{#1}\left[#2\right]}
+}
+\newcommand{\relSumConj}[1][\nout, \ntot, \mu, \rep, \beta]{\Xi^{\overline{\mathsf{sum}}}_{#1}} 
+\newcommand{\relSumUnstructDef}{\ensuremath{
+  \left\{
+    \begin{aligned}
+      &((h, \vec{s}, (\mat{H}_i, \mat{F}_i, \mat{Y}_i, (\mat{M}_{i,j})_{j \in [t_i]})_{i \in [\numSumInputs]}), (\mat{W}_i)_{i \in [\numSumInputs]}) \colon \\
+      &\quad
+        \begin{aligned}
+          &((\mat{H}_i, \mat{F}_i, \mat{Y}_i), \mat{W}_i) \in \relLin[(i)] \\
+          &h \in (\ring_q^\rep[\varX^{\tilde{\mu}}])[\varY^t];~~
+          \mat{M}_{i,j} \in \ring_q^{\tilde{\wdim} \times \wdim_i};~
+          \vec{s} \in \ring_q^\rep \\
+          &\sum_{\vec{z} \in [\tdim]^{\tilde{\mu}}} h( \LDE[\mat{M}_{i,j} \mat{W}_i]: i \in [\numSumInputs], j \in [t_i] )(\bb) = \vec{s} \bmod q \\ 
+        \end{aligned}
+    \end{aligned}
+ \right\}
+}}
+% \newcommand{\relSumUnstructDef}{\ensuremath{
+%   \left\{
+%     \begin{aligned}
+%       &((\mat{H}, \mat{F}, \mat{Y}, h, \vec{s}, (\mat{M}_i)_{i \in [t]}), \mat{W}) \colon \\
+%       &\quad
+%         \begin{aligned}
+%           &((\mat{H}, \mat{F}, \mat{Y}), \mat{W}) \in \relLin[\nout, \ntot, \mu, \rep, \beta] \\
+%           &h \in \ring_q^\rep[\varX^t];~~
+%           \mat{M}_i \in \ring_q^{\tilde{\wdim} \times \wdim};~
+%           \vec{s} \in \ring_q^\rep \\
+%           &\sum_{\bb \in \HC} h( \LDE[\mat{M}_i \mat{W}]: i \in [t] )(\bb) = \vec{s} \bmod q \\ 
+%         \end{aligned}
+%     \end{aligned}
+%  \right\}
+% }}
+\newcommand{\relSumConjDef}{\ensuremath{
+  \left\{
+    \begin{aligned}
+      &((\mat{H}, \mat{F}, \mat{Y}, \vec{t}), \mat{W}) \colon \\
+      &\quad
+        \begin{aligned}
+          & ((\mat{H}, \mat{F}, \mat{Y}), \mat{W}) \in \relLin[\nout, \ntot, \mu, \rep, \beta] \\
+          &\sum_{\bb \in \HC} (\LDE[\mat{W}] \odot \LDE[\overline{\mat{W}}])(\bb) = \vec{t} \bmod q \in \ring_q^\rep 
+        \end{aligned}
+    \end{aligned}
+ \right\}
+}}
+
+\newcommand{\piLdeUnstruct}{\texorpdfstring{\Pi^{\mathsf{lde}}}{Pi\^{}lde}}
+\newcommand{\piLdeStruct}{\texorpdfstring{\Pi^{\mathsf{lde}\mhyphen{}\otimes}}{Pi\^{}lde-tensor}} 
+\newcommand{\piLdeBoth}{\texorpdfstring{\Pi^{\mathsf{lde}(\mhyphen{}\otimes)}}{Pi\^{}lde(-tensor)}} 
+
+\newcommand{\piSum}{\texorpdfstring{\Pi^{\mathsf{sum}}}{Pi\^{}sum}}
+\newcommand{\piSumConj}{\texorpdfstring{\Pi^{\overline{\mathsf{sum}}}}{Pi\^{}sum-conj}}  
+
+\newcommand{\pinormklnored}[2]{
+    \relnorm_{\nout, \ntot, \mu, \rep, \beta} 
+    ~~{#1}~~ 
+    \relSumConj
+}
+
+
+\newcommand{\challfielde}{
+    \FF^{\times}_{q^e}
+}
+
+
+\newcommand{\ringtofields}{\vartheta}
+\newcommand{\funfield}{\FF_{q^e}}
+\newcommand{\relLinRocsUnstruct}[1][\nout, \ntot, \tilde{n}, \mu, \tilde{\mu}, \rep, \beta]{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs}}_{#1}} 
+\newcommand{\relLinRocsStruct}[1][\nout, \ntot, \tilde{n}, \mu, \tilde{\mu}, \rep, \beta]{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs\mhyphen{}\otimes}}_{#1}} 
+\newcommand{\relLinRocsUnstructlong}{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs}\mhyphen{}\mathsf{long}}} 
+\newcommand{\relLinRocsStructLong}{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs}\mhyphen{}\otimes\mhyphen{}\mathsf{long}}} 
+\newcommand{\relLinRocsBoth}[1][\nout, \ntot, \tilde{n}, \mu, \tilde{\mu}, \rep, \beta]{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs}(\mhyphen{}\otimes)}_{#1}}
+\newcommand{\relLinRocsHori}[1][\nout, \ntot, \tilde{n}, \mu, \rep, \beta]{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs}\mhyphen{}\rdrarrow t}_{#1}} 
+\newcommand{\relLinRocsVert}[1][\nout, \ntot, \tilde{n}, \mu, \rep, \beta]{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs}\mhyphen{}\drdarrow t}_{#1}} 
+\newcommand{\piiLinRocsHori}[1][\nout, \ntot, \tilde{n}, \mu, \rep, \beta]{\Pi^{\mathsf{r1cs}\mhyphen{}\rdrarrow t}_{#1}} 
+\newcommand{\piiLinRocsVert}[1][\nout, \ntot, \tilde{n}, \mu, \rep, \beta]{\Pi^{\mathsf{r1cs}\mhyphen{}\drdarrow t}_{#1}} 
+\newcommand{\relLinRocsSucc}{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{r1cs}\mhyphen{}\mathsf{succ}}} 
+\newcommand{\relLinRocsUnstructDef}{\ensuremath{
+  \left\{
+    \begin{aligned}
+      &((\mat{H}, \mat{F}, \mat{Y}, \mat{A}, \mat{B}, \mat{C}, \mat{D}, \mat{E}), \mat{W})
+      \\
+      &\quad
+        \begin{aligned}
+            &  ((\mat{H}, \mat{F}, \mat{Y}), \mat{W}) \in \relLin[\nout, \ntot, \mu, \rep, \beta] \\ 
+            & \mat{A}, \mat{B}, \mat{C} \in \ring_q^{\tilde{\wdim} \times \wdim},~ 
+            \mat{D} \in \ring_q^{\tilde{n} \times d^{\tensor \mu}},~
+            \mat{E} \in \ring_q^{\tilde{n} \times \rep} \\
+            & \mat{A} \mat{W} \odot \mat{B} \mat{W} = \mat{C} \mat{W} \bmod q,~
+            \mat{D} \mat{W} = \mat{E} \bmod q 
+        \end{aligned}
+    \end{aligned}
+  \right\}
+}}
+
+\newcommand{\relRocsUnstruct}[1][\tilde{n}, \mu, \tilde{\mu}, \rep, \beta]{\Xi^{\mathsf{r1cs}}_{#1}} 
+\newcommand{\relRocsStruct}[1][\tilde{n}, \mu, \tilde{\mu}, \rep, \beta]{\Xi^{\mathsf{r1cs}\mhyphen{}\otimes}_{#1}}
+\newcommand{\relRocsBoth}[1][\tilde{n}, \mu, \tilde{\mu}, \rep]{\Xi^{\mathsf{r1cs}(\mhyphen{}\otimes)}_{#1}}
+\newcommand{\relRocsHori}{\Xi^{\mathsf{r1cs}\mhyphen{}\rdrarrow}} 
+\newcommand{\relRocsVert}{\Xi^{\mathsf{r1cs\mhyphen{}\drdarrow}}} 
+\newcommand{\relRocsUnstructDef}{\ensuremath{
+  \left\{
+    \begin{aligned}
+      &((\mat{A}, \mat{B}, \mat{C}, \mat{D}, \mat{E}), \mat{W}) \colon \\
+      &\quad
+        \begin{aligned}
+            & \mat{A}, \mat{B}, \mat{C} \in \ring_q^{\tilde{\wdim} \times \wdim},~ 
+            \mat{D} \in \ring_q^{\tilde{n} \times d^{\tensor \mu}},~
+            \mat{E} \in \ring_q^{\tilde{n} \times \rep} \\
+            & \mat{A} \mat{W} \odot \mat{B} \mat{W} = \mat{C} \mat{W} \bmod q,~
+            \mat{D} \mat{W} = \mat{E} \bmod q 
+        \end{aligned}
+    \end{aligned}
+  \right\}
+}}
+
+
+\newcommand{\rel}{\texorpdfstring{\Xi}{Xi}} % relation with single block
+\newcommand{\relKS}{\texorpdfstring{\Xi^{\textsf{KS}}}{Xi\^{KS}}} % relation with single block
+
+\newcommand{\relsingle}{\texorpdfstring{\Xi^{\mathsf{lin}}}{Xi\^{}lin}} % relation with single block
+\newcommand{\pcs}{\mathsf{\Gamma}}
+\newcommand{\Eval}{\mathsf{Eval}}
+
+
+
+\newcommand{\piLinRocs}{\Pi^{\mathsf{lin\mhyphen{}r1cs}}} % relation with single block
+\newcommand{\piRocs}{\Pi^{\mathsf{r1cs}}} % relation with single block
+\newcommand{\piLinRocsHori}{\Pi^{\mathsf{lin\mhyphen{}r1cs\mhyphen{}\rdrarrow}}} % relation with single block
+\newcommand{\piLinRocsVert}{\Pi^{\mathsf{r1cs\mhyphen{}\drdarrow}}} % relation with single block
+\newcommand{\piLinRocsUnstructLong}{\Pi^{\mathsf{r1cs}}} % relation with single block
+\newcommand{\piLinRocsUnstruct}{\Pi^{\mathsf{lin\mhyphen{}r1cs}}} % relation with single block
+
+\newcommand{\relhad}{\Xi^{\mathsf{\odot}}} % relation with single block
+\newcommand{\pihad}{\Pi^{\mathsf{\odot}}} % relation with single block
+\newcommand{\relsis}{\texorpdfstring{\Xi^{\mathsf{sis}}}{Xi\^{}sis}} % relation with single block
+\newcommand{\relvsis}{\texorpdfstring{\Xi^{\mathsf{vsis}}}{Xi\^{}vsis}} % relation with single block
+\newcommand{\orsis}{\hlsis{~\cup~\relsis}} % relation with single block
+\newcommand{\orvsis}{\hlsis{~\cup~\relvsis}} % relation with single block
+\newcommand{\relLinrelaxed}{\texorpdfstring{\Xi^{\mathsf{lin}\mhyphen{}\mathsf{rel}}}{Xi\^{lin-rel}}} % relation with single block
+\newcommand{\relLinsis}{\Xi^{\mathsf{lin}\lor\mathsf{sis}}} % relation with single block
+\newcommand{\relblock}{\Xi^{\mathsf{block}}}  % relation with 
+\newcommand{\relhp}{\Xi^{\mathsf{hp\mhyphen{}sum\mhyphen{}check}}}
+\newcommand{\releval}{\Xi^{\mathsf{eval}}}
+\newcommand{\relhps}{\Xi^{\mathsf{hp\mhyphen{}sq\mhyphen{}sum\mhyphen{}check}}}
+\newcommand{\relaut}{\Xi^{\mathsf{aut}}}  % relation with multiple blocks
+\newcommand{\relautsis}{\Xi^{\mathsf{aut}\lor\mathsf{sis}}}  % relation with multiple blocks
+\newcommand{\relbin}{\Xi^{\mathsf{bin}}} 
+\newcommand{\relfun}{\Xi^{\mathsf{fun}}} 
+\newcommand{\relbinsis}{\Xi^{\mathsf{bin}\lor\mathsf{sis}}} 
+\newcommand{\relblockaut}{\Xi^{\mathsf{block\mhyphen{}aut}}}  % relation with multiple blocks
+\newcommand{\relip}{\Xi^{\mathsf{ip}}} % inner product relation relation with single block
+\newcommand{\relipsis}{\Xi^{\mathsf{ip}\lor\mathsf{sis}}}
+\newcommand{\relinnerproduct}{\relip}  
+\newcommand{\parin}{\mathsf{par\mhyphen{}in}}  
+\newcommand{\relor}{\mathrel{\cup}} % "Or/Union" of relations for RoKs.
+\newcommand{\parout}{\mathsf{par\mhyphen{}out}}  
+\newcommand{\relnorm}{\Xi^{\mathsf{norm}}}  % relation with multiple blocks
+\newcommand{\relnormsis}{\Xi^{\mathsf{norm}\lor\mathsf{sis}}}  % relation with multiple blocks
+% \newcommand{\relip}{\Xi^{\mathsf{inner\mhyphen{}product}}} % relation with single block
+\newcommand{\releip}{\Xi^{\mathsf{eip}}} % relation with single block
+\newcommand{\releipsis}{\Xi^{\mathsf{eip}\lor\mathsf{sis}}} % relation with single block
+\newcommand{\relmergesingle}{\Xi^{\mathsf{merge}}}  % relation for merging relsingle
+\newcommand{\pisingle}{\texorpdfstring{\Pi^{\mathsf{sf\mhyphen{}single}}}{Pi\^{}single}} % protocol for split-and-folding single block
+\newcommand{\pisplit}{\texorpdfstring{\Pi^{\mathsf{split}}}{Pi\^{}split}} % protocol for splitting a witness for dimension reduction
+\newcommand{\pijoin}{\texorpdfstring{\Pi^{\mathsf{join}}}{Pi\^{}join}} % protocol for splitting a witness for dimension reduction
+\newcommand{\pifold}{\texorpdfstring{\Pi^{\mathsf{fold}}}{Pi\^{}fold}} % protocol for folding multiple \relsingle claims into one.
+\newcommand{\pirp}{\texorpdfstring{\Pi^{\mathsf{RP}}}{Pi\^{}RP}} % protocol for folding multiple \relsingle claims into one.
+\newcommand{\piupcs}{\Pi^{\mathsf{vsis\mhyphen{}pcs\mhyphen{uv}}}} % protocol for folding multiple \relsingle claims into one.
+\newcommand{\pimpcs}{\Pi^{\mathsf{vsis\mhyphen{}pcs\mhyphen{mv}}}} % protocol for folding multiple \relsingle claims into one.
+\newcommand{\pipcsus}{\Pi^{\mathsf{vsis\mhyphen{}pcs\mhyphen{}us}}} % protocol for folding multiple \relsingle claims into one.
+% \newcommand{\pibatch}{\texorpdfstring{\Pi^{\mathsf{batch\mhyphen{}rows}}}{Pi\^{}batch}} % protocol for batching multiple rows into one
+\newcommand{\pibatch}{\texorpdfstring{\Pi^{\mathsf{batch}}}{Pi\^{}batch}} % protocol for batching multiple rows into one
+\newcommand{\pimerge}{\texorpdfstring{\Pi^{\mathsf{merge}}}{Pi\^{}merge}} % protocol for merging \relsingle claims.
+\newcommand{\piipmain}{\texorpdfstring{\Pi^{\mathsf{ip}}}{Pi\^{}ip}} % main part of protocol for inner product
+\newcommand{\picipmain}{\texorpdfstring{\Pi^{\mathsf{cip}}}{Pi\^{}cip}} % main part of protocol for inner product
+\newcommand{\pifun}{\texorpdfstring{\Pi^{\mathsf{fun}}}{Pi\^{}fun}}
+\newcommand{\pieipmain}{\texorpdfstring{\Pi^{\mathsf{eip}}}{Pi\^{}eip}} % main part of protocol for inner product
+\newcommand{\pinorm}{\texorpdfstring{\Pi^{\mathsf{norm}}}{Pi\^{}norm}} % complete protocol for norm
+\newcommand{\pinormklno}{\texorpdfstring{\Pi^{\substack{\mathsf{norm}\mhyphen\\\mathsf{klno24}}}}{Pi\^{}norm-klno24}} % complete protocol for norm
+% \newcommand{\pinormpoly}{\texorpdfstring{\Pi^{\mathsf{norm}\mhyphen\mathsf{poly}}}{Pi\^{}norm-poly}} % complete protocol for norm
+\newcommand{\pinormpoly}{\texorpdfstring{\Pi^{\mathsf{norm}}}{Pi\^{}norm}} % complete protocol for norm
+\newcommand{\pinormpolyfull}{\texorpdfstring{\Pi^{\mathsf{norm}\mhyphen\mathsf{full}}}{Pi\^{}norm-full}} % complete protocol for norm
+\newcommand{\pinormpolypowtwo}{\texorpdfstring{\Pi^{\mathsf{norm}\mhyphen\mathsf{poly}\mhyphen\mathsf{pow}\mhyphen\mathsf{2}}}{Pi\^{}norm-poly-pow-2}} % complete protocol for norm
+\newcommand{\piipfull}{\texorpdfstring{\Pi^{\mathsf{ip}+}}{Pi\^{}ip+}} % complete protocol for inner products
+\newcommand{\pieipfull}{\texorpdfstring{\Pi^{\mathsf{eip}+}}{Pi\^{}eip+}} % complete protocol for inner products
+\newcommand{\pinormfull}{\texorpdfstring{\Pi^{\mathsf{norm}+}}{Pi\^{}norm+}} % complete protocol for norm
+\newcommand{\pinormbeta}{\texorpdfstring{\Pi^{\mathsf{norm}_{\beta}}}{Pi\^{}norm-beta}}
+\newcommand{\pinormbetafull}{\texorpdfstring{\Pi^{{\mathsf{norm}+}_{\beta}}}{Pi\^{}norm+-beta}} % complete protocol for norm with fixed bound beta
+\newcommand{\pidecomp}{\texorpdfstring{\Pi^{b\mhyphen{}\mathsf{decomp}}}{Pi\^{}decomp}} % protocol for b-ary decomposition
+\newcommand{\pisplitfold}{\texorpdfstring{\Pi^{\mathsf{split{\&}fold}}}{Pi\^{}split{\&}fold}} % split-and-fold protocol
+\newcommand{\pisplitfoldnorm}{\texorpdfstring{\Pi^{\mathsf{sfn}}}{Pi\^{}sfn}} % split-and-fold protocol with intermediate norm-check
+\newcommand{\piaut}{\texorpdfstring{\Pi^{\mathsf{aut}}}{Pi\^{}aut}} % protocol for automorphism relation
+\newcommand{\pisinglebin}{\texorpdfstring{\Pi^{\mathsf{lin\mhyphen{}bin}}}{Pi\^{}lin\mhyphen{}bin}} % protocol for automorphism relation
+\newcommand{\pisinglebincrt}{\texorpdfstring{\Pi^{\mathsf{lin\mhyphen{}bin}}_{\mathsf{crt}, p}}{Pi\^{}lin\mhyphen{}bin\mhyphen{}crt, p}} % protocol for automorphism relation
+\newcommand{\pibin}{\texorpdfstring{\Pi^{\mathsf{bin}}}{Pi\^{}bin}} % protocol for binariness check 
+% \newcommand{\piSum}{\texorpdfstring{\Pi^{\mathsf{hp\mhyphen{}sum\mhyphen{}check}}}{Pi\^{}sum-check}} % protocol for binariness check 
+\newcommand{\piSums}{\texorpdfstring{\Pi^{\mathsf{hp\mhyphen{}sq\mhyphen{}sum\mhyphen{}check}}}{Pi\^{}sum-check}} % protocol for binariness check 
+\newcommand{\pilinbin}{\texorpdfstring{\Pi^{\mathsf{lin\mhyphen{}bin}}}{Pi\^{}lin\mhyphen{}bin}} % protocol for binariness check 
+\newcommand{\piipbin}{\texorpdfstring{\Pi^{\mathsf{ip\mhyphen{}bin}}}{Pi\^{}ip\mhyphen{}bin}} % protocol for binariness check 
+\newcommand{\pifinish}{\texorpdfstring{\Pi^{\mathsf{finish}}}{Pi\^{}finish}} % protocol for finishing 
+
+\newcommand{\challsubtractive}{\mathcal{C}_{\ring}}
+\newcommand{\challfield}{\mathcal{C}_{\ring_q}}
+\newcommand{\challfold}{\challsubtractive}
+\newcommand{\challbatch}{\challfield}
+\newcommand{\challaut}{\challfield} 
+\newcommand{\challinnerproduct}{\challfield}
+
+\newcommand{\wdim}{m} % witness dimension
+\newcommand{\rep}{r} % repetitions
+\newcommand{\repin}{\rep_{\mathsf{in}}} % repetitions
+\newcommand{\repout}{\rep_{\mathsf{out}}} % repetitions
+\newcommand{\rocsdim}{\tilde{\wdim}} % col dim of r1cs matrices
+\newcommand{\tdim}{d} % base tensor dimension
+\newcommand{\numblks}{n^{\mathsf{blk}}} % number of blocks
+\newcommand{\base}{b} % norm bound for the (2\base+1)-ary decomposition
+\newcommand{\baseip}{\base_{\mathsf{ip}}} % norm bound for the (2\base+1)-ary decomposition
+\newcommand{\ntot}{n} % relation dimension (input total)
+\newcommand{\nout}{\hat{n}} % relation dimension (output total = \ntot)
+\newcommand{\nbat}{\uuline{n}}
+% \newcommand{\nouttop}{\ntop} % relation dimension (output total = \ntot)
+% \newcommand{\noutbot}{\nout - \nouttop} % relation dimension (output total = \ntot)
+% \newcommand{\ntop}{\overline{n}}% % relation dimension (top part of output).
+\newcommand{\ntop}{\hat{n}}% % relation dimension (top part of output).
+\newcommand{\nbot}{\underline{n}} % relation dimension (bottom part of output).
+%\newcommand{\nbotbatch}{\textred{n^{\textbf{batch}}}} % relation dimension (bottom part of output).
+\newcommand{\naut}{n^{\mathsf{aut}}}% number of automorphism relations
+\newcommand{\nip}{n^{\mathsf{ip}}}% number of inner-product relations
+\newcommand{\ipwt}{c} % variable weight in weighted inner product
+
+
+
+\newcommand{\indexaut}{\iota_{\mathsf{aut}}} % index map for automorphisms
+\newcommand{\indexautin}{\iota_{\mathsf{aut}\mhyphen\mathsf{in}}} % index map for automorphism inputs
+\newcommand{\indexautout}{\iota_{\mathsf{aut}\mhyphen\mathsf{out}}} % index map for automorphism outputs
+
+\newcommand{\indexip}{\iota_{\mathsf{ip}}} % index map for inner products
+\newcommand{\indexipin}{\iota_{\mathsf{ip}\mhyphen\mathsf{in}}} % index map for inner product inputs
+\newcommand{\indexipout}{\iota_{\mathsf{ip}\mhyphen\mathsf{out}}} % index map for inner product outputs
+
+\newcommand{\pcsbasis}{\vec{b}} % basis of pcs
+\newcommand{\nvarpcsbasis}{\upsilon} % #variable of basis
+
 % Convention
 % one-letter variables: plain (it)
 % multiple-letter variables: sf
@@ -13,6 +412,7 @@
 \usepackage{esvect}
 
 \newcommand{\transpose}{\mathtt{T}}
+\newcommand{\blankarg}{\:\cdot\:}
 % \newcommand{\lin}{\mathsf{lin}}
 % \newcommand{\lout}{\mathsf{lout}}
 % \newcommand{\lin}{\ensuremath{\nu}}
@@ -25,27 +425,66 @@
 \newcommand{\mrank}{\ensuremath{\eta}}
 \newcommand{\td}{\mathsf{td}}
 \newcommand{\conductor}{\mathfrak{f}}
+\newcommand{\hatconductor}{\hat{\mathfrak{f}}}
+\newcommand{\trfactor}{\ensuremath{{\sqrt{\hatconductor \eulerphi}}}}
 \newcommand{\MM}{\mathbb{M}}
 \newcommand{\cM}{\mathcal{M}}
 \newcommand{\EE}{\mathbb{E}}
 \newcommand{\cE}{\mathcal{E}}
 \newcommand{\cK}{\mathcal{K}}
 \newcommand{\units}[1][q]{\ring_{#1}^\times}
+\newcommand{\un}[1]{\underline{#1}}
 \newcommand{\inner}[2]{\ensuremath{\left\langle {#1, #2} \right\rangle}}
 \newcommand{\ideal}[1]{\ensuremath{\left\langle {#1} \right\rangle}}
 \newcommand{\is}[1]{\stackrel{?}{#1}}
+\newcommand{\must}[1]{\stackrel{!}{#1}}
 \newcommand{\ctxt}{\mathsf{ctxt}}
 \newcommand{\TrapGen}{\mathsf{TrapGen}}
 \newcommand{\SampPre}{\mathsf{SampPre}}
 \newcommand{\SampD}{\mathsf{SampD}}
+\newcommand{\fold}{\mathsf{Fold}}
 \newcommand{\round}[1]{\ensuremath{\lfloor#1\rceil}}
 \newcommand{\linspan}[1]{\ensuremath{\mathsf{Span}(#1)}}
 \DeclareMathOperator{\rot}{rot}
 \DeclareMathOperator{\vecf}{vec}
-\newcommand{\coeff}{\mathsf{coeff}}
+\DeclareMathOperator{\diag}{diag}
+\newcommand{\pcoeff}{\mathsf{pcoef}}
+\newcommand{\coeff}{\mathtt{c\!f\!}}
+\newcommand{\repr}{\mathsf{rep}}
+% \newcommand{\coeff}{\psi}
+\newcommand{\icoeff}{\mathsf{coef}}
+\newcommand{\naive}{\mathsf{naive}}
+\newcommand{\Aut}{\mathsf{Aut}}
+\newcommand{\Gal}{\mathsf{Gal}}
+\newcommand{\conv}{\mathsf{conv}}
 \newcommand{\ones}{1^\circ}
 \newcommand{\vones}{\vec{1}^\circ}
 \newcommand{\fieldnorm}{\mathcal{N}}
+\newcommand{\coeffinftynorm}[1]{\norm{#1}_{\coeff, \infty}}
+\newcommand{\coefftwonorm}[1]{\norm{\coeff\left( #1 \right)}_2}
+\newcommand{\coeffpnorm}[1]{\norm{\coeff\left( #1 \right)}_p}
+\newcommand{\coeffbox}[1]{{\color{Mahogany} #1}}
+\newcommand{\ecoeffbox}[1]{{\color{Mahogany} for coefficient $\infty$-norm: #1}}
+\newcommand{\canbox}[1]{{\color{Violet} #1}}
+\newcommand{\ecanbox}[1]{{\color{Violet} for canonical $2$-norm: #1}}
+
+\newcommand{\cfinftynorm}[1]{\coeffinftynorm{#1}}
+\newcommand{\cftwonorm}[1]{\coefftwonorm{#1}}
+\newcommand{\cfpnorm}[1]{\coeffpnorm{#1}}
+\newcommand{\caninftynorm}[1]{\norm{\sigma\left( #1 \right)}_\infty}
+\newcommand{\cantwonorm}[1]{\norm{#1}_{\sigma,2}}
+\newcommand{\canpnorm}[1]{\norm{\sigma\left( #1 \right)}_p}
+\newcommand{\inftynorm}[1]{\norm{ #1 }_\infty}
+\newcommand{\twonorm}[1]{\norm{ #1 }_2}
+\newcommand{\pnorm}[1]{\norm{ #1 }_p}
+\newcommand{\eulerphi}{\varphi}
+\newcommand{\opnorm}[1]{\norm{\left( #1 \right)}_{\mathsf{op}}}
+
+\newcommand{\cfcaninftyconst}{\mathfrak{c}}
+
+\newcommand{\cfinftyexpansion}[1]{\gamma_{\psi}(#1)}
+
+\newcommand{\cardof}[1]{\abs{#1}}
 
 \newcommand{\tx}{\mathsf{tx}}
 
@@ -54,6 +493,37 @@
 
 \newcommand{\BGW}{\mathsf{BGW}}
 \newcommand{\latBGW}{\mathsf{BGW}^{\sharp}}
+
+\newcommand{\uni}{\mathtt{uni}}
+\newcommand{\mlin}{\mathtt{mlin}}
+\newcommand{\mvar}{\mathtt{mvar}}
+\newcommand{\lau}{\mathtt{lau}}
+\newcommand{\blau}{\mathtt{blau}}
+\newcommand{\pow}{\mathtt{pow}}
+\newcommand{\powersof}{\mathtt{powersof}}
+\newcommand{\unit}{\mathtt{unit}}
+\newcommand{\bind}{\mathtt{bind}}
+\newcommand{\SZ}{\mathtt{SZ}}
+
+\newcommand{\PE}{\mathsf{PE}}
+\newcommand{\MLE}{\mathsf{MLE}}
+\newcommand{\LDE}{\mathsf{LDE}}
+\newcommand{\bitset}{\{0,1\}}
+\newcommand{\eq}{\mathsf{eq}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\ball}{\mathsf{B}}
+\newcommand{\ChallSet}{\ring_{q \times}}
+\newcommand{\tensor}{\otimes}
+\newcommand{\rowtensor}{\bullet}
+\newcommand{\isomto}{\cong}
+% \newcommand{\union}{\cup}
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\eqdef}{\eqqcolon}
+\newcommand{\vectorise}{\mathsf{vec}}
+%\newcommand{\getsr}{\sample}
+
+
+
 
 % Settings
 \makeatletter
@@ -72,37 +542,7 @@
 \NewDocumentCommand\allabstracts{m}{\def\gabstract{#1}}
 \NewDocumentCommand\conference{m}{\def\gconference{#1}}
 \NewDocumentCommand\mypubinfo{}{An extended abstract of this paper appears at  \gconference.}
-\newcommand\makealltitles{
-\ifnum\style=\sigalternate
-    {
-        \begin{abstract}{\gabstract}\end{abstract} \maketitle%
-    }
-\else
-  \ifnum\style=\sciendo
-      {\begin{abstract}{\gabstract}\end{abstract}
-      }
-      \maketitle
-  \else
-    {\maketitle%
-    % \ifnum\paperversion=\fullversion
-    % \pubinfo{\mypubinfo}
-    % \fi%
-    % \bool_if:nTF {\int_compare_p:n {\style=\lncs}}
-    \ifnum\style=\lncs
-      {\begin{abstract}{\gabstract}\end{abstract}}
-    \else
-      {\begin{abstract}{\gabstract}\end{abstract}
-        \ifnum\style=\ieeetr
-        \begin{IEEEkeywords}
-          {\gkeywords}
-        \end{IEEEkeywords}
-        \fi
-      }
-    \fi
-    }
-  \fi
-\fi
-}
+
 
 
 % Editorial
@@ -153,10 +593,13 @@
 \renewcommand{\verifier}{\ensuremath{\mathcal{V}}\xspace}
 
 % Colors
-\newcommand{\gray}[1]{\colorbox{black!20}{$#1$}}
+\newcommand{\mgray}[1]{\colorbox{black!20}{$#1$}} % math
+\newcommand{\mmgray}[1]{\colorbox{black!10}{$#1$}} % math
+\newcommand{\tgray}[1]{\colorbox{black!20}{#1}} % text
 
 % Vectors and Matrices
-\renewcommand{\vec}[1]{{\boldsymbol{\mathbf{#1}}}}
+%\renewcommand{\vec}[1]{{\boldsymbol{\mathbf{#1}}}}
+\renewcommand{\vec}[1]{{{\mathbf{#1}}}} % much faster.
 \newcommand{\mat}[1]{\ensuremath{\mathbf{#1}}\xspace} % Matrix
 
 % Units
@@ -165,6 +608,7 @@
 % Parameters
 \newcommand{\prfoutlen}{\ensuremath{\secpar}\xspace}
 \newcommand{\pubparam}{\ensuremath{\mathsf{pp}}\xspace}
+\newcommand{\params}{\ensuremath{\mathsf{params}}\xspace}
 
 % Keys
 \newcommand{\PK}{\ensuremath{\mathsf{PK}}\xspace} % (Set of) Public Keys
@@ -194,12 +638,17 @@
 \newcommand{\corrupted}{\ensuremath{\mathrm{Corr}}\xspace}
 \newcommand{\lang}{\ensuremath{\mathcal{L}}\xspace}
 \newcommand{\pos}{\ensuremath{\mathsf{Pos}}\xspace} % Position Map
+\newcommand{\extring}{\hat{\mathcal{R}}} % Ring
+\newcommand{\order}{\mathcal{O}} % Ring
 \newcommand{\ring}{\mathcal{R}} % Ring
 \newcommand{\rings}{\mathcal{S}} % Ring
 \newcommand{\ringt}{\mathcal{T}} % Ring
 \newcommand{\field}{\mathcal{K}} % Field
 \newcommand{\polylog}[1][\secpar]{\mathsf{polylog}(#1)}
-
+\newcommand{\repo}{anonymous.4open.science/r/cootie-catcher}
+\newcommand{\linktorepotree}[1]{\texttt{\href{https://\repo}{\repo}}}
+\newcommand{\linktorepobloc}[1]{\texttt{\href{https://\repo/#1}{\repo/#1}}}
+\newcommand{\myhypertarget}[2]{\hypertarget{#1}{#2}}
 % Spaces
 \newcommand{\AttrSp}{\ensuremath{\mathcal{X}}\xspace}
 \newcommand{\CtxtSp}{\ensuremath{\mathcal{C}}\xspace}
@@ -256,6 +705,8 @@
 \newcommand{\zdv}{\ensuremath{\mathcal{Z}}\xspace}
 \newcommand{\stmt}{\mathsf{stmt}}
 \newcommand{\wit}{\mathsf{wit}}
+\newcommand{\ppar}{\mathsf{pp}}
+\newcommand{\f}{\mathfrak{f}} % Conductor
 
 % Computation Models
 \newcommand{\ITM}{\ensuremath{\mathrm{ITM}}\xspace} % Interactive Turing Machines
@@ -301,6 +752,7 @@
 \newcommand{\rGC}{\ensuremath{\mathit{r}\mathsf{GC}}\xspace} % Reusable Garbled Circuits
 \newcommand{\rPRF}{\ensuremath{\mathsf{rPRF}}\xspace} % Randomized Pseudorandom Functions
 
+
 % Primitives - Specific
 \newcommand{\NRPRF}{\ensuremath{\mathsf{NR}}\xspace} % Naor-Reingold PRF
 \newcommand{\pythia}{\textsc{Pythia}\xspace} % The Pythia PRF Service
@@ -318,7 +770,7 @@
 \newcommand{\access}{\ensuremath{\mathsf{Access}}\xspace} % Access
 \newcommand{\aggregate}{\ensuremath{\mathsf{Agg}}\xspace} % Aggregate
 \newcommand{\auth}{\ensuremath{\mathsf{Auth}}\xspace}
-\newcommand{\com}{\ensuremath{\mathsf{Com}}\xspace}
+\newcommand{\com}{\ensuremath{\mathsf{com}}\xspace}
 \newcommand{\constrain}{\ensuremath{\mathsf{Constrain}}\xspace} % Constrain
 \newcommand{\corr}{\ensuremath{\mathsf{Corr}}\xspace}
 \newcommand{\delegate}{\ensuremath{\mathsf{Del}}\xspace}
@@ -348,6 +800,14 @@
 \newcommand{\decrypt}{\ensuremath{\mathsf{Dec}}\xspace}
 \newcommand{\preverify}{\ensuremath{\mathsf{PreVerify}}\xspace}
 \newcommand{\lhl}{\ensuremath{\mathsf{lhl}}\xspace}
+% \newcommand{\embed}{\ensuremath{\mathsf{embed}}\xspace}
+\newcommand{\embed}{\ensuremath{{\mathsf{\coeff}^{-1}}}\xspace}
+\newcommand{\ct}{\ensuremath{\mathsf{ct}}\xspace}
+\newcommand{\lift}{\ensuremath{\mathsf{lift}}\xspace}
+\newcommand{\reduce}{\ensuremath{\mathsf{reduce}}\xspace}
+\newcommand{\CRT}{\ensuremath{\mathsf{CRT}}\xspace}
+\newcommand{\invCRT}{\ensuremath{{\mathsf{CRT}^{-1}}}\xspace}
+\newcommand{\sumcoeff}{\ensuremath{\mathsf{\Sigma}_\coeff}\xspace}
 
 
 % Protocols
@@ -375,6 +835,12 @@
 {\ifthenelse{\equal{#1}{}}%
   {\ensuremath{\mathsf{vSIS}}}%
   {\ensuremath{\mathsf{vSIS}_{\/#1}}}%
+  \xspace%
+}
+\newcommand{\svSIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\sigma\mathsf{vSIS}}}%
+  {\ensuremath{\sigma\mathsf{vSIS}_{\/#1}}}%
   \xspace%
 }
 \newcommand{\ISIS}[1]%
@@ -431,6 +897,15 @@
   {\ensuremath{k\text{-}R\text{-}\mathsf{ISIS}_{\/#1}}}%
   \xspace%
 }
+
+
+\newcommand{\skRISIS}[1]%
+{\ifthenelse{\equal{#1}{}}%
+  {\ensuremath{\sigma-k\text{-}R\text{-}\mathsf{ISIS}}}%
+  {\ensuremath{\sigma-k\text{-}R\text{-}\mathsf{ISIS}_{\/#1}}}%
+  \xspace%
+}
+
 
 \newcommand{\kMSIS}[1]%
 {\ifthenelse{\equal{#1}{}}%
@@ -539,7 +1014,6 @@
 \DeclareMathOperator{\Vol}{Vol}
 \DeclareMathOperator{\GH}{GH}
 
-
 %Other stuff
 \newcommand{\hybrid}{\ensuremath{\mathsf{Hyb}}}
 
@@ -559,6 +1033,11 @@
 \newcommand{\Ver}{\verify} % verification
 \newcommand{\Signer}{\mathcmd{\mathsf{S}}} % signer
 \newcommand{\User}{\mathcmd{\mathsf{U}}} % user
+\newcommand{\bb}{{\mathbf{z}}}
+\newcommand{\bbb}{z}
+\newcommand{\HC}{[\tdim]^\mu}
+\newcommand{\tHC}{[\tdim]^{\tilde{\mu}}}
+
 
 
 
@@ -570,7 +1049,7 @@
 \newcommand{\Com}{{\mathsf{Com}}}
 \newcommand{\Open}{{\mathsf{Open}}}
 \newcommand{\ck}{{\mathsf{ck}}}
-
+\newcommand{\pred}{\mathcal{P}}
 
 % ADAPTOR SIGNATURE
 \newcommand{\hashH}{\mathcal{H}}
@@ -634,7 +1113,7 @@
 
 % To make acknowledgement commands from acm available for everything else
 
-\unless\ifnum\style=\sigalternate
+
 \newenvironment{acks}{%
   \begingroup
   \section{Acknowledgments}
@@ -646,7 +1125,6 @@
 \newcommand\grantnum[3][]{#3%
   \def\@tempa{#1}\ifx\@tempa\@empty\else\space(\url{#1})\fi}
 \makeatother
-\fi
 
 % Easier include whole file depending on paperversion
 \NewDocumentCommand\inputanon{m}{
@@ -713,10 +1191,84 @@
 	\left.\vphantom{\begin{matrix} #1 \end{matrix}}\right\}#2}
 
 
+\newcommand{\verylongleftarrow}[1]{
+  \setlength{\unitlength}{.01in}
+  \begin{picture}(#1,1) \put(#1,0){\vector(-1,0){#1}} \end{picture}
+}
+
+\newcommand{\verylongrightarrow}[1]{
+  \setlength{\unitlength}{.01in}
+  \begin{picture}(#1,1) \put(0,0){\vector(1,0){#1}} \end{picture}
+}
+
+\newcommand{\leftgoing}[1]{{\stackrel{{\displaystyle #1}} {\verylongleftarrow{85}}}}
+\newcommand{\rightgoing}[2]{{\stackrel{{\displaystyle #1}} {\verylongrightarrow{85}}}}
+\newcommand{\inof}{\ensuremath{\mathsf{index\mhyphen of}}}
 
 
+\newcommand\searrows{\hspace{-.1em} \searrow \hspace{-.4em} \searrow}
+
+
+
+
+\newcommand{\twist}{\ensuremath{\alpha}}
+
+\NewDocumentCommand{\betatwo}{E{_}{{}}}{\ifstrempty{#1}{\beta_{2}}{\beta_{2, #1}}}
+\NewDocumentCommand{\betainf}{E{_}{{}}}{\ifstrempty{#1}{\beta_{\infty}}{\beta_{\infty, #1}}}
+
+\NewDocumentCommand{\gammatwo}{E{_}{{}}}{\ifstrempty{#1}{\gamma_{\cantwonorm{\cdot}}}{\gamma_{\cantwonorm{\cdot}, #1}}}
+\NewDocumentCommand{\gammainfty}{E{_}{{}}}{\ifstrempty{#1}{\gamma_{\coeffinftynorm{\cdot}}}{\gamma_{\coeffinftynorm{\cdot}, #1}}}
+\NewDocumentCommand{\thetatwo}{E{_}{{}}}{\ifstrempty{#1}{\theta_{\cantwonorm{\cdot}}}{\theta_{\cantwonorm{\cdot}, #1}}}
+\NewDocumentCommand{\thetainfty}{E{_}{{}}}{\ifstrempty{#1}{\theta_{\coeffinftynorm{\cdot}}}{\theta_{\coeffinftynorm{\cdot}, #1}}}
+
+
+\newcommand{\normsboxed}[2]{\boxed{\canbox{#1}}_{\hskip0.1em\cantwonorm{\cdot}} \hskip0.2em \mathsf{and} \hskip0.4em \boxed{\coeffbox{#2}}_{\hskip0.1em\coeffinftynorm{\cdot}}} 
+\newcommand{\normsboxedresp}[2]{\canbox{#1}} 
+\newcommand{\nboxedresp}[2]{\boxed{\canbox{#1}} \hskip0.2em \left(\mathsf{resp.,} \hskip0.4em \boxed{\coeffbox{#2}} \hskip0.2em \right)} 
+\newcommand{\norms}[2]{{\canbox{#1}} \hskip0.4em \mathsf{and} \hskip0.4em {\coeffbox{#2}}} 
+\global\mdfdefinestyle{exampledefault}{%
+linecolor=red,linewidth=3pt,%
+leftmargin=1cm,rightmargin=1cm
+}
+\newcommand{\vertsplit}[1]{{\underbrace[l1r]{\overbrace[L1R]{\hspace{0.3em} #1 \hspace{0.3em}}}}}  % Top part of vector
+
+
+
+\newcommand{\removeme}[1]{\begin{mdframed}[style=exampledefault] #1 \end{mdframed}} 
 
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
 %%% End:
+
+\newcommand\makealltitles{
+\ifnum\style=\sigalternate
+    {
+        \begin{abstract}{\gabstract}\end{abstract} \maketitle%
+    }
+\else
+  \ifnum\style=\sciendo
+      {\begin{abstract}{\gabstract}\end{abstract}
+      }
+      \maketitle
+  \else
+    {\maketitle%
+    % \ifnum\paperversion=\fullversion
+    % \pubinfo{\mypubinfo}
+    % \fi%
+    % \bool_if:nTF {\int_compare_p:n {\style=\lncs}}
+    \ifnum\style=\lncs
+      {\begin{abstract}{\gabstract}\end{abstract}}
+    \else
+      {\begin{abstract}{\gabstract}\end{abstract}
+        \ifnum\style=\ieeetr
+        \begin{IEEEkeywords}
+          {\gkeywords}
+        \end{IEEEkeywords}
+        \fi
+      }
+    \fi
+    }
+  \fi
+\fi
+}

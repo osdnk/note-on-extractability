@@ -1,4 +1,81 @@
 % !TEX root = main.tex
 
-\section{Introduction}
-sdsą
+% \section{Introduction}
+
+We present two variants of reduction of knowledge, one of which is a generalization of the other. The first variant is a standard reduction of knowledge, while the second variant is a stronger version. Further discussions and implications are deferred for the following sections.
+
+\begin{definition}[Knowledge Soundness \cite{C:AttCraKoh21}]
+    An reduction of knowledge $\Pi = (\prover*, \verifier)$ from $\Xi_0$ to $\Xi_1$ is \emph{knowledge sound} with \emph{knowledge error} $\kappa : \NN \to [0, 1]$ if there exists a knowledge extractor $\extractor$ and there exists
+    a positive polynomial $q = \poly(|x|)$, such that for every statement $x \in \Xi_0$ and any prover $\prover^*$, the extractor $\extractor^{\prover^*}(x)$ runs in expected time polynomial in $|x|$ (counting calls to $\prover^*$ as unit-cost operations) and outputs a witness $w$ such that
+    \[
+    \Pr{ (x; \extractor^{\prover^*}(x)) \in \Xi_0 } \geq (\epsilon(\prover^*, x) - \kappa(|x|))  / q(|x|),
+    \]
+    where $\epsilon(\prover^*, x) \defeq\Pr{ \Xi_1 \leftarrow  (\prover^*, \verifier)(x) }$.
+    % \rlai{Remark that this is stronger than usual.}
+\end{definition}
+
+\begin{definition}[Strong Knowledge Soundness]
+    An reduction of knowledge $\Pi = (\prover*, \verifier)$ from $\Xi_0$ to $\Xi_1$ is \emph{knowledge sound} with \emph{knowledge error} $\kappa : \NN \to [0, 1]$ if there exists a knowledge extractor $\extractor$, such that for every statement $x \in \Xi_0$ and any prover $\prover^*$, the extractor $\extractor^{\prover^*}(x)$ runs in expected time polynomial in $|x|$ (counting calls to $\prover^*$ as unit-cost operations) and outputs a witness $w$ such that
+    \[
+    \Pr{ (x; \extractor^{\prover^*}(x)) \in \Xi_0 } \geq \epsilon(\prover^*, x) - \kappa(|x|),
+    \]
+    where $\epsilon(\prover^*, x) \defeq\Pr{ \Xi_1 \leftarrow  (\prover^*, \verifier)(x) }$.
+    % \rlai{Remark that this is stronger than usual.}
+\end{definition}
+
+
+\paragraph{Principal relation.}
+We recall the standard linear SIS-like relation. 
+\begin{equation*}
+    \relLin \defeq \left\{
+    \begin{aligned}
+      &((\mat{F}, \mat{Y}), \mat{W}) \\
+      &\quad
+        \begin{aligned}
+          & \mat{F} \in \ring_q^{\ntot \times \wdim} ~~ \mat{Y} \in \ring_q^{\ntot \times \rep}~~
+            \mat{W} \in \ring^{\wdim \times \rep} \\
+          &\cantwonorm{\mat{W}} \leq \beta 
+            ~~ \text{and}~~ \mat{H} \mat{F} \mat{W} = \mat{Y} \bmod q
+        \end{aligned}
+    \end{aligned}
+ \right\}
+\end{equation*}
+
+\begin{definition}[Challenge set expansion factor]\label{def:challenge-set-expansion}
+    We say that the challenge set $\mathcal{C}$ has expansion factor $\gammatwo$ if:
+    For all $x \in \ring$ and $c \in \mathcal{C}$, $\cantwonorm{x \cdot c} \leq \gammatwo \cdot \cantwonorm{x}$
+\end{definition}
+
+\begin{lemma}[Johnson--Lindenstrauss -- Lemma III.1 from \cite{jlonsets} adapted]
+    \label{lem:jl}
+    Let $\epsilon > 0$.
+    Let $\mat{A} \in \RR^{n \times m}$ be an isotropic and subgaussian matrix with sub-gaussian parameter $K$. If \[ n \geq  C K^2 \ln K \epsilon^{-2} \ln(1 / \kappa), \]
+    then for any $\vec{x} \in \RR^m$, with probability at least $1 - \kappa$ we have 
+    \[ 
+        (1 - \epsilon) \twonorm{\vec{x}} \leq \frac{\twonorm{\mat{A} \vec{x}}}{\sqrt{n}}\leq (1 + \epsilon) \twonorm{\vec{x}}.
+    \]
+\end{lemma}
+
+% We remark that our definition of knowledge soundness is stronger than the one in~\cite{C:AttCraKoh21}, as the probability of the extractor's success is defined without a denominator $q(|x|)$ for a polynomial $q$.
+
+
+\begin{theorem}
+    Let $\pifold$ be a an almost folklore reduction of knowledge accepting an an input a candidate instance $((\mat{F}, \mat{Y}), \mat{W}) \in \relLin[\ntot, \wdim, 2, \beta]$, performing a right multiplication with a challenge matrix $\mat{C} \in \ring_q^{2 \times 1}$ and outputting $\mat{Y}' \defeq \mat{Y} \mat{C} \bq,\mat{W}' \defeq \mat{W} \mat{C} \bq$.
+    Protocol $\pifold$ is 
+    is perfectly correct and reduces knowledge for
+    \[
+        \relLin[\ntot, \wdim, 2, \beta]
+        \mapsto
+        \relLin[\ntot, \wdim, 2, \beta  ]
+        ~.
+    \]
+    It is knowledge-sound with 
+    % It is coordinate-wise $(\rep+1)$-special sound,
+    % for
+    % \[
+    %     \rellin_{\wdim, \rep, 2 \gammatwo \varrho^{\rep-1} \beta', 2 \gammatwo \varrho^{\rep}}
+    %     \mapsfrom
+    %     \rellin_{\wdim, \beta', \varrho}
+    %     ~.
+    % \]
+\end{theorem}
