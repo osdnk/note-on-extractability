@@ -1216,7 +1216,9 @@
 \NewDocumentCommand{\betatwo}{E{_}{{}}}{\ifstrempty{#1}{\beta_{2}}{\beta_{2, #1}}}
 \NewDocumentCommand{\betainf}{E{_}{{}}}{\ifstrempty{#1}{\beta_{\infty}}{\beta_{\infty, #1}}}
 
-\NewDocumentCommand{\gammatwo}{E{_}{{}}}{\ifstrempty{#1}{\gamma_{\cantwonorm{\cdot}}}{\gamma_{\cantwonorm{\cdot}, #1}}}
+% \NewDocumentCommand{\gammatwo}{E{_}{{}}}{\ifstrempty{#1}{\gamma_{\cantwonorm{\cdot}}}{\gamma_{\cantwonorm{\cdot}, #1}}}
+\newcommand{\gammatwo}{\Gamma}
+
 \NewDocumentCommand{\gammainfty}{E{_}{{}}}{\ifstrempty{#1}{\gamma_{\coeffinftynorm{\cdot}}}{\gamma_{\coeffinftynorm{\cdot}, #1}}}
 \NewDocumentCommand{\thetatwo}{E{_}{{}}}{\ifstrempty{#1}{\theta_{\cantwonorm{\cdot}}}{\theta_{\cantwonorm{\cdot}, #1}}}
 \NewDocumentCommand{\thetainfty}{E{_}{{}}}{\ifstrempty{#1}{\theta_{\coeffinftynorm{\cdot}}}{\theta_{\coeffinftynorm{\cdot}, #1}}}

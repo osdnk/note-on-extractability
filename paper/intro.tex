@@ -1,81 +1,64 @@
 % !TEX root = main.tex
 
-% \section{Introduction}
+\section{Introduction}
+In this write-up, we focus on a ``regular'' folding protocol for the linear SIS-like relation. Particularly, we consider two instances of the linear relation, i.e. 
+\[ 
+    \mat{F} \mat{w}_0 = \mat{y}_0 \bmod q
+    \quad \text{and} \quad
+    \mat{F} \mat{w}_1 = \mat{y}_1 \bmod q,
+\]
+where $\inftynorm{\vec{w}_0}, \inftynorm{\vec{w}_1} \leq \beta$ and $q$ is some prime. Now, the folding protocol $\pifold$ is defined as follows:
+\begin{enumerate}
+    \item The verifier samples a (short) challenge ${c} \in \ring_q$ and sends it to the prover. 
+    \item The prover computes $\mat{y}' = \mat{y}_0 + \mat{y}_1 \cdot c \bmod q$ and $\mat{w}' = \mat{w}_0 + \mat{w}_1 \cdot c \bmod q$.
+    \item The verifier computes $\mat{w}' = \mat{w}_0 + \mat{w}_1 \cdot c \bmod q$.
+\end{enumerate}
 
-We present two variants of reduction of knowledge, one of which is a generalization of the other. The first variant is a standard reduction of knowledge, while the second variant is a stronger version. Further discussions and implications are deferred for the following sections.
+At the end of the protocol, both parties agree on the following relation: \[ \mat{F} \mat{w}' = \mat{y}' \bmod q. \]
 
-\begin{definition}[Knowledge Soundness \cite{C:AttCraKoh21}]
-    An reduction of knowledge $\Pi = (\prover*, \verifier)$ from $\Xi_0$ to $\Xi_1$ is \emph{knowledge sound} with \emph{knowledge error} $\kappa : \NN \to [0, 1]$ if there exists a knowledge extractor $\extractor$ and there exists
-    a positive polynomial $q = \poly(|x|)$, such that for every statement $x \in \Xi_0$ and any prover $\prover^*$, the extractor $\extractor^{\prover^*}(x)$ runs in expected time polynomial in $|x|$ (counting calls to $\prover^*$ as unit-cost operations) and outputs a witness $w$ such that
-    \[
-    \Pr{ (x; \extractor^{\prover^*}(x)) \in \Xi_0 } \geq (\epsilon(\prover^*, x) - \kappa(|x|))  / q(|x|),
-    \]
-    where $\epsilon(\prover^*, x) \defeq\Pr{ \Xi_1 \leftarrow  (\prover^*, \verifier)(x) }$.
-    % \rlai{Remark that this is stronger than usual.}
-\end{definition}
+In the context of the folding protocol and folding-based SNARKs, we are interested in extractability, i.e., we assume that we have oracle access to a (potentially cheating) prover $\prover^*$ outputting pairs $(\vec{w}', \vec{y}')$, and we want to extract a witness $\widehat{\mat{w}}$ such that $\mat{F} \widehat{\mat{w}} = \mat{y} \bmod q$. 
 
-\begin{definition}[Strong Knowledge Soundness]
-    An reduction of knowledge $\Pi = (\prover*, \verifier)$ from $\Xi_0$ to $\Xi_1$ is \emph{knowledge sound} with \emph{knowledge error} $\kappa : \NN \to [0, 1]$ if there exists a knowledge extractor $\extractor$, such that for every statement $x \in \Xi_0$ and any prover $\prover^*$, the extractor $\extractor^{\prover^*}(x)$ runs in expected time polynomial in $|x|$ (counting calls to $\prover^*$ as unit-cost operations) and outputs a witness $w$ such that
-    \[
-    \Pr{ (x; \extractor^{\prover^*}(x)) \in \Xi_0 } \geq \epsilon(\prover^*, x) - \kappa(|x|),
-    \]
-    where $\epsilon(\prover^*, x) \defeq\Pr{ \Xi_1 \leftarrow  (\prover^*, \verifier)(x) }$.
-    % \rlai{Remark that this is stronger than usual.}
-\end{definition}
+The routine strategy to construct such an extractor is to simply run the prover until obtaining two accepting transcripts for different challenges $c_0$ and $c_1$ under the 2-special-soundness framework. Then, the extractor has access to tuples $(c_0, \vec{w}_0')$ and $(c_1, \vec{w}_1')$ such that \[
+    \mat{F} \vec{w}_0' = \vec{y}_0 + \vec{y}_1 \cdot c_0 \bmod q
+    \quad \text{and} \quad
+    \mat{F} \vec{w}_1' = \vec{y}_0 + \vec{y}_1 \cdot c_1 \bmod q.
+\]
 
+Then, by subtracting the two equations, we have \[
+    \mat{F} (\vec{w}_0' - \vec{w}_1') = (\vec{y}_0 + \vec{y}_1 \cdot c_0) - (\vec{y}_0 + \vec{y}_1 \cdot c_1) \bmod q
+    \quad \Rightarrow \quad
+    \mat{F} (\vec{w}_0' - \vec{w}_1') / (c_0 - c_1) = \vec{y}_1 \bmod q.
+\]
 
-\paragraph{Principal relation.}
-We recall the standard linear SIS-like relation. 
-\begin{equation*}
-    \relLin \defeq \left\{
-    \begin{aligned}
-      &((\mat{F}, \mat{Y}), \mat{W}) \\
-      &\quad
-        \begin{aligned}
-          & \mat{F} \in \ring_q^{\ntot \times \wdim} ~~ \mat{Y} \in \ring_q^{\ntot \times \rep}~~
-            \mat{W} \in \ring^{\wdim \times \rep} \\
-          &\cantwonorm{\mat{W}} \leq \beta 
-            ~~ \text{and}~~ \mat{H} \mat{F} \mat{W} = \mat{Y} \bmod q
-        \end{aligned}
-    \end{aligned}
- \right\}
-\end{equation*}
+After renaming $\widehat{\vec{w}}_1 = \vec{w}_0' - \vec{w}_1'$ and $\hat{c}_1 = c_0 - c_1$, we have $\mat{F} \widehat{\vec{w}}_1 = \vec{y}_1 \cdot \hat{c}_1 \bmod q$. Similarly, we extract $\widehat{\vec{w}}_0$ and $\hat{c}_0$. We denote $\hat{c}_0$ and $\hat{c}_1$ as the slack factors.
 
-\begin{definition}[Challenge set expansion factor]\label{def:challenge-set-expansion}
-    We say that the challenge set $\mathcal{C}$ has expansion factor $\gammatwo$ if:
-    For all $x \in \ring$ and $c \in \mathcal{C}$, $\cantwonorm{x \cdot c} \leq \gammatwo \cdot \cantwonorm{x}$
-\end{definition}
+Assuming that $\mat{F}$ is a (hard) SIS instance, then the extracted relation is still cryptographically meaningful, i.e., it is binding as after obtaining two preimages with slacks $(\widehat{\vec{w}}_0, \hat{c}_0)$ and $(\widehat{\vec{w}}_1, \hat{c}_1)$, we have 
+\[ 
+    \mat{F} (\widehat{\vec{w}}_1 \hat{c}_0 - \widehat{\vec{w}}_0 \hat{c}_1) = \vec{0} \bmod q,
+\] 
 
-\begin{lemma}[Johnson--Lindenstrauss -- Lemma III.1 from \cite{jlonsets} adapted]
-    \label{lem:jl}
-    Let $\epsilon > 0$.
-    Let $\mat{A} \in \RR^{n \times m}$ be an isotropic and subgaussian matrix with sub-gaussian parameter $K$. If \[ n \geq  C K^2 \ln K \epsilon^{-2} \ln(1 / \kappa), \]
-    then for any $\vec{x} \in \RR^m$, with probability at least $1 - \kappa$ we have 
-    \[ 
-        (1 - \epsilon) \twonorm{\vec{x}} \leq \frac{\twonorm{\mat{A} \vec{x}}}{\sqrt{n}}\leq (1 + \epsilon) \twonorm{\vec{x}}.
-    \]
-\end{lemma}
+i.e., $(\widehat{\vec{w}}_1 \hat{c}_0 - \widehat{\vec{w}}_0 \hat{c}_1)$ is an SIS-break.
 
-% We remark that our definition of knowledge soundness is stronger than the one in~\cite{C:AttCraKoh21}, as the probability of the extractor's success is defined without a denominator $q(|x|)$ for a polynomial $q$.
+However, the problem is that if we want to combine the protocol for many rounds, we get this annoying issue that the slack factor continuously grows in the extraction direction. Also, while extracting, we technically get a witness for a different relation (precisely, a relaxed variant of the input relation). For that reason, in the literature, several approaches have been proposed to reduce the slack factor, e.g.,
+
+\begin{itemize}
+    \item Usage of the subtractive set \cite{C:AlbLai21,C:CinLaiMal23,EPRINT:BonChe24}, where the challenge set is selected in such a way that the inverse of $\hat{c}$ is short. Then, $\vec{v} \defeq \widehat{\vec{w}} / \hat{c}$ can be treated as a candidate witness (with no slack).
+    \item Unconditional norm checks, where the prover is required to prove that the norm of $\widehat{\vec{w}}$ is small, e.g., \cite{RR,EPRINT:BonChe24}. 
+\end{itemize}
+
+Also, in some literature, both strategies have been connected, e.g., \cite{AC:KLNO24,CC}, where the norm-check requires that the witness is already without slack, and the norm-check is used to further reduce the norm of the witness. 
 
 
-\begin{theorem}
-    Let $\pifold$ be a an almost folklore reduction of knowledge accepting an an input a candidate instance $((\mat{F}, \mat{Y}), \mat{W}) \in \relLin[\ntot, \wdim, 2, \beta]$, performing a right multiplication with a challenge matrix $\mat{C} \in \ring_q^{2 \times 1}$ and outputting $\mat{Y}' \defeq \mat{Y} \mat{C} \bq,\mat{W}' \defeq \mat{W} \mat{C} \bq$.
-    Protocol $\pifold$ is 
-    is perfectly correct and reduces knowledge for
-    \[
-        \relLin[\ntot, \wdim, 2, \beta]
-        \mapsto
-        \relLin[\ntot, \wdim, 2, \beta  ]
-        ~.
-    \]
-    It is knowledge-sound with 
-    % It is coordinate-wise $(\rep+1)$-special sound,
-    % for
-    % \[
-    %     \rellin_{\wdim, \rep, 2 \gammatwo \varrho^{\rep-1} \beta', 2 \gammatwo \varrho^{\rep}}
-    %     \mapsfrom
-    %     \rellin_{\wdim, \beta', \varrho}
-    %     ~.
-    % \]
-\end{theorem}
+\section{On the impossibility of extractability of folding without slack}
+
+The idea we have been discussing is that potentially a random combination of short challenges should approximately preserve the norm. Indeed, there has been a line of research considering this approach, e.g., \cite{EC:GenHalLyu22,C:BeuSei23}, where the authors consider a random challenge set $\mathcal{C}$ and show that the norm of the extracted witness is approximately preserved. Nevertheless, these were always different challenge sets used for extraction and the norm preservation statistical argument. 
+
+I tried different ways to make the extraction possible (with no slack) by using a challenge set of short ring elements. However, it seems impossible by the following argument. 
+
+Let $\ring = \ZZ[X] / \langle X^N + 1 \rangle$\footnote{The argument generalizes to the complete family of cyclotomics}, where $N$ is a power-of-two. Observe that there exists a principal ideal $\mathcal{I} \defeq \langle X + 1 \rangle$ inside the ring $\ring$. The norm of this ideal is $2$, i.e., for any element $x \in \ring$, we have that either $(X + 1) \mid x$ or $(X + 1) \mid (x+1)$. Therefore, we may assume that for the prover, for a non-negligible advantage, it is enough to produce the output for only one coset of the ideal, as at least half of the elements are in one coset.
+
+Then, suppose that the prover has a witness $\vec{v}$ for a relaxed variant of the relation, i.e., 
+
+\[ \mat{F} \underbrace{\left( \frac{\vec{w}}{X + 1} \right)}_{\vec{v}}  = \vec{y} \bmod q ~~\text{or}~~ \mat{F} \underbrace{\left( \frac{\vec{w} + 1}{X + 1} \right)}_{\vec{v}} = \vec{y} \bmod q, \]
+
+where $\vec{w}$ is short, but $\vec{v}$ might have a slack. However, after folding, i.e., multiplying with a challenge $c \in \ring$ (selected from the appropriate coset), we have that $\vec{v} \cdot c$ is also short, so effectively the prover started from the wrong relation (not short) and folded into short, effectively attacking our candidate construction. 
