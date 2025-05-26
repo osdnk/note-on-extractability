@@ -43,7 +43,7 @@ However, the problem is that if we want to combine the protocol for many rounds,
 
 \begin{itemize}
     \item Usage of the subtractive set \cite{C:AlbLai21,C:CinLaiMal23,EPRINT:BonChe24}, where the challenge set is selected in such a way that the inverse of $\hat{c}$ is short. Then, $\vec{v} \defeq \widehat{\vec{w}} / \hat{c}$ can be treated as a candidate witness (with no slack).
-    \item Unconditional norm checks, where the prover is required to prove that the norm of $\widehat{\vec{w}}$ is small, e.g., \cite{RR,EPRINT:BonChe24}. 
+    \item Unconditional norm checks, where the prover is required to prove that the norm of $\widehat{\vec{w}}$ is small, e.g., \cite{RR,EPRINT:BonChe25}. 
 \end{itemize}
 
 Also, in some literature, both strategies have been connected, e.g., \cite{AC:KLNO24,CC}, where the norm-check requires that the witness is already without slack, and the norm-check is used to further reduce the norm of the witness. 
@@ -55,10 +55,13 @@ The idea we have been discussing is that potentially a random combination of sho
 
 I tried different ways to make the extraction possible (with no slack) by using a challenge set of short ring elements. However, it seems impossible by the following argument. 
 
-Let $\ring = \ZZ[X] / \langle X^N + 1 \rangle$\footnote{The argument generalizes to the complete family of cyclotomics}, where $N$ is a power-of-two. Observe that there exists a principal ideal $\mathcal{I} \defeq \langle X + 1 \rangle$ inside the ring $\ring$. The norm of this ideal is $2$, i.e., for any element $x \in \ring$, we have that either $(X + 1) \mid x$ or $(X + 1) \mid (x+1)$. Therefore, we may assume that for the prover, for a non-negligible advantage, it is enough to produce the output for only one coset of the ideal, as at least half of the elements are in one coset.
+Let $\ring = \ZZ[X] / \langle X^N + 1 \rangle$\footnote{The argument generalizes to the complete family of cyclotomics}, where $N$ is a power-of-two. Observe that there exists a principal ideal $\mathcal{I} \defeq \langle X + 1 \rangle$ inside the ring $\ring$. The norm of this ideal is $2$, i.e., for any element $x \in \ring$, we have that either $(X + 1) \mid x$ or $(X + 1) \mid (x+1)$\footnote{Check the following script for the empirical test \url{https://gist.github.com/osdnk/b88f849c62084977e9d21165d06999b1}}. Therefore, we may assume that for the prover, for a non-negligible advantage, it is enough to produce the output for only one coset of the ideal, as at least half of the elements are in one coset.
 
 Then, suppose that the prover has a witness $\vec{v}$ for a relaxed variant of the relation, i.e., 
 
 \[ \mat{F} \underbrace{\left( \frac{\vec{w}}{X + 1} \right)}_{\vec{v}}  = \vec{y} \bmod q ~~\text{or}~~ \mat{F} \underbrace{\left( \frac{\vec{w} + 1}{X + 1} \right)}_{\vec{v}} = \vec{y} \bmod q, \]
 
 where $\vec{w}$ is short, but $\vec{v}$ might have a slack. However, after folding, i.e., multiplying with a challenge $c \in \ring$ (selected from the appropriate coset), we have that $\vec{v} \cdot c$ is also short, so effectively the prover started from the wrong relation (not short) and folded into short, effectively attacking our candidate construction. 
+
+
+As a conclusion, it seems that the folding protocol cannot be extractable without slack with an unstructured challenge set. The ways to make it extractable is to use a challenge set that is structured in such a way that the inverse-slack factor is small, e.g., the subtractive set \cite{C:AlbLai21,C:CinLaiMal23,EPRINT:BonChe24} or the norm-check \cite{RR,EPRINT:BonChe25}.
